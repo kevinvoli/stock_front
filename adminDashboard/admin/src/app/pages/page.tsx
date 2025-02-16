@@ -1,20 +1,34 @@
-
+"use client";
 import Footer from '@/components/layout/footer';
 import Script from 'next/script';
+import { useState } from 'react';
 
 
 
 export default function Index(){
+
+  const [email, setEmail] = useState("");
+  const [subject, setSubject] = useState("");
+  const [message, setMessage] = useState("");
+
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const res = await fetch("http://localhost:3001/auth/register", {  // Ton API NestJS
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, subject }),
+    });
+
+    if (res.ok) {
+      alert("Compte créé ! Vérifie ton email.");
+    } else {
+      alert("Erreur à l'inscription.");
+    }
+  };
+
   return (
 <>
-
-
-      
-
-      {/* <!-- Left side column. contains the logo and sidebar --> */}
-
-
-
 
       {/* <!-- Right side column. Contains the navbar and content of the page --> */}
       <div className="content-wrapper">
@@ -106,8 +120,8 @@ export default function Index(){
                 </ul>
                 <div className="tab-content no-padding">
                   {/* <!-- Morris chart - Sales --> */}
-                  <div className="chart tab-pane active" id="revenue-chart" style={{position: "relative", height: "300px;"}}></div>
-                  <div className="chart tab-pane" id="sales-chart" style={{position: "relative", height: "300px;"}}></div>
+                  <div className="chart tab-pane active" id="revenue-chart" style={{position: "relative", height: "300px"}}></div>
+                  <div className="chart tab-pane" id="sales-chart" style={{position: "relative", height: "300px"}}></div>
                 </div>
               </div>
               {/* <!-- /.nav-tabs-custom --> */}
@@ -312,20 +326,20 @@ export default function Index(){
                   {/* <!-- /. tools --> */}
                 </div>
                 <div className="box-body">
-                  <form action="#" method="post">
+                  <form onSubmit={handleSubmit}>
                     <div className="form-group">
-                      <input type="email" className="form-control" name="emailto" placeholder="Email to:"/>
+                      <input type="email" className="form-control" name="emailto" placeholder="Email to:" value={email} onChange={(e)=>setEmail(e.target.value)}/>
                     </div>
                     <div className="form-group">
-                      <input type="text" className="form-control" name="subject" placeholder="Subject"/>
+                      <input type="text" className="form-control" name="subject" placeholder="Subject" value={subject} onChange={(e)=>setSubject(e.target.value)}/>
                     </div>
                     <div>
-                      <textarea className="textarea" placeholder="Message" style={{width: "100%", height: "125px", fontSize: "14px", lineHeight: "18px", border: "1px solid #dddddd", padding: "10px"}}></textarea>
+                      <textarea className="textarea" placeholder="Message" style={{width: "100%", height: "125px", fontSize: "14px", lineHeight: "18px", border: "1px solid #dddddd", padding: "10px"}}  value={message} onChange={(e)=>setMessage(e.target.value)} ></textarea>
                     </div>
                   </form>
                 </div>
                 <div className="box-footer clearfix">
-                  <button className="pull-right btn btn-default" id="sendEmail">Send <i className="fa fa-arrow-circle-right"></i></button>
+                  <button type='submit' className="pull-right btn btn-default" id="sendEmail">Send <i className="fa fa-arrow-circle-right"></i></button>
                 </div>
               </div>
 
@@ -350,7 +364,7 @@ export default function Index(){
                   </h3>
                 </div>
                 <div className="box-body">
-                  <div id="world-map" style={{height: "250px", width: "100%;"}}></div>
+                  <div id="world-map" style={{height: "250px", width: "100%"}}></div>
                 </div>
                 {/* <!-- /.box-body--> */}
                 <div className="box-footer no-border">
@@ -387,7 +401,7 @@ export default function Index(){
                   </div>
                 </div>
                 <div className="box-body border-radius-none">
-                  <div className="chart" id="line-chart" style={{height: "250px;"}}></div>
+                  <div className="chart" id="line-chart" style={{height: "250px"}}></div>
                 </div>
                 {/* <!-- /.box-body --> */}
                 <div className="box-footer no-border">
@@ -451,7 +465,7 @@ export default function Index(){
                         <small className="pull-right">90%</small>
                       </div>
                       <div className="progress xs">
-                        <div className="progress-bar progress-bar-green" style={{width: "90%;"}}></div>
+                        <div className="progress-bar progress-bar-green" style={{width: "90%"}}></div>
                       </div>
 
                       <div className="clearfix">
@@ -459,7 +473,7 @@ export default function Index(){
                         <small className="pull-right">70%</small>
                       </div>
                       <div className="progress xs">
-                        <div className="progress-bar progress-bar-green" style={{width: "70%;"}}></div>
+                        <div className="progress-bar progress-bar-green" style={{width: "70%"}}></div>
                       </div>
                     </div>
                     {/* <!-- /.col --> */}
@@ -469,7 +483,7 @@ export default function Index(){
                         <small className="pull-right">60%</small>
                       </div>
                       <div className="progress xs">
-                        <div className="progress-bar progress-bar-green" style={{width: "60%;"}}></div>
+                        <div className="progress-bar progress-bar-green" style={{width: "60%"}}></div>
                       </div>
 
                       <div className="clearfix">
@@ -477,7 +491,7 @@ export default function Index(){
                         <small className="pull-right">40%</small>
                       </div>
                       <div className="progress xs">
-                        <div className="progress-bar progress-bar-green" style={{width: "40%;"}}></div>
+                        <div className="progress-bar progress-bar-green" style={{width: "40%"}}></div>
                       </div>
                     </div>
                     {/* <!-- /.col --> */}
