@@ -15,23 +15,27 @@ export default function Register(){
     e.preventDefault();
     console.log({email,password,name});
     
-    const res = await fetch("http://localhost:3003/gateway/create_user?service=authService&module=auth", {  // Ton API NestJS
+    const response = await fetch("http://localhost:3003/gateway/create_user?service=authService&module=auth", {  // Ton API NestJS
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password, name }),
     });
-  
 
-    if (res.ok) {
-      const data = await res.json();
-      console.log("Inscription réussie :", data);
-    } else {
-      console.log("echec de l'inscription");
-      
+    console.log("Réponse brute :", await response.json(),response); // Affiche le texte brut avant de parser
+
+    if (!response.ok) {
+      throw new Error(`Erreur HTTP : ${response.status} ${response.statusText}`);
     }
+
+    const matches = await response.json();
+    console.log("les data json",matches);
+    
+    // Vérifie que les données sont un tableau
+    if (!Array.isArray(matches)) {
+      throw new Error("Les données reçues ne sont pas un tableau de matchs.");
+    }
+  
   };
-
-
 
   return (
     <>
