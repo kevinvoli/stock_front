@@ -125,3 +125,17 @@ https://postimages.org/fr/?utm_source=chatgpt.com
 
 4. MagicAPI Image Upload
 https://api.market/store/magicapi/image-upload?utm_source=chatgpt.com
+
+
+pour avoir une base de donnée gratuite (c13HszwFcL)
+1. InfinityFree
+https://www.infinityfree.com/  description: déjà creer une bd sur cette plateforme
+
+2. FreeSQLDatabase
+https://www.freesqldatabase.com/
+
+3. AlwaysData
+https://www.alwaysdata.com/fr/ 
+
+4. Railway.app
+https://railway.com/
