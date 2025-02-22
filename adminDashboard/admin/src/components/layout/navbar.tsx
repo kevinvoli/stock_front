@@ -4,7 +4,7 @@
 export default function Navbar(){
 
   return (
-    <>
+    
           <nav className="navbar navbar-static-top" role="navigation">
       {/* <!-- Sidebar toggle button--> */}
       <a href="/" className="sidebar-toggle" data-toggle="offcanvas" role="button">
@@ -251,6 +251,6 @@ export default function Navbar(){
         </ul>
       </div>
     </nav>
-    </>
+    
   )
 }

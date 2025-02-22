@@ -15,7 +15,6 @@ export default function Aside(){
   const [isOpen, setIsOpen] = useState(false);
   return (
 
-    <>
             <aside className="main-sidebar">
         {/* <!-- sidebar: style can be found in sidebar.less --> */}
         <section className="sidebar">
@@ -193,6 +192,6 @@ export default function Aside(){
         </section>
         {/* <!-- /.sidebar --> */}
       </aside>
-    </>
+
   )
 }
