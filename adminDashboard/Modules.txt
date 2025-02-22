@@ -139,3 +139,16 @@ https://www.alwaysdata.com/fr/
 
 4. Railway.app
 https://railway.com/
+
+Réalisation effectuées sur la partie Users
+
+Ajout de la page Liste des utilisateurs, accesible via
+http://localhost:3000/users
+rest à faire 
+-integration de la barre de recherche
+
+Ajout de la page ajout des utilisateurs, accesible via
+http://localhost:3000/users/add
+rest à faire
+-integration de l'api post
+
