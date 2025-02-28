@@ -13,6 +13,13 @@ pnpm dev
 # or
 bun dev
 ```
+create file .env.local end add 
+    NEXTAUTH_SECRET=super-secret-key
+    NEXTAUTH_URL=http://localhost:3000
+
+
+
+
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 

@@ -20,7 +20,7 @@ export default function ImportScript(){
     <Script  src=" /plugins/sparkline/jquery.sparkline.min.js" type="text/javascript" /> 
     {/* <!-- jvectormap -- /> */}
     <Script  src=" /plugins/jvectormap/jquery-jvectormap-1.2.2.min.js" type="text/javascript" /> 
-    <Script  src="plugins/jvectormap/jquery-jvectormap-world-mill-en.js" type="text/javascript" /> 
+    <Script  src="/plugins/jvectormap/jquery-jvectormap-world-mill-en.js" type="text/javascript" /> 
     {/* <!-- jQuery Knob Chart -- /> */}
     <Script  src=" /plugins/knob/jquery.knob.js" type="text/javascript" /> 
     {/* <!-- daterangepicker -- /> */}

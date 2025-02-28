@@ -30,8 +30,6 @@ export default function Users(){
     const filteredUsers = users.filter((user) => 
         `${user.name} ${user.email}`.toLowerCase().includes(String(searchQuery).toLowerCase())
     );
-
-
     const indexOfLastUser = currentPage * itemsPerPage;
     const indexOfFirstUser = indexOfLastUser - itemsPerPage
     const currentUsers = users.slice(indexOfFirstUser,indexOfLastUser)
