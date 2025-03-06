@@ -8,9 +8,7 @@ export default function LoginLayout({
 }>) {
   return (
     <>
-<SessionProviderWrapper>
 {children}
-</SessionProviderWrapper>
     </>
    
   );

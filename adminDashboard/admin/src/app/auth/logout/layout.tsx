@@ -15,9 +15,7 @@ export default function LoginLayout({
     <>
     
       
-       <SessionProviderWrapper>
         {children}
-        </SessionProviderWrapper>
    
   
     
