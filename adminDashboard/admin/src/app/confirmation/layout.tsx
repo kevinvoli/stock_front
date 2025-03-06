@@ -12,12 +12,8 @@ export default function ConfirmationLayout({
  
     <body className="register-page">
         <div className="wrapper">
-    
         {children}
-   
         </div>
-
-    
       </body>
     </html>
     

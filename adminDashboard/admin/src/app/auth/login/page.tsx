@@ -1,48 +1,57 @@
 "use client";
 
 import Checkbox from "@/components/UI/input/inputChackbox";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { signIn, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 
 export default function Login(){
+  const {data:session, status}= useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard"; // Page cible
 
-  const { data: session } = useSession();
+
   const router = useRouter();
 
-  if (session) {
-    return (
-      <div>
-        <p>Bienvenue {session.user?.email}</p>
-     
-      </div>
-    );
-  }
+  useEffect(()=>{
+  console.error("⛔ session",session)
+
+    if (status === "loading") {
+      setError('vous ete connecte')
+    }
+  
+    if (status === "authenticated") {
+      router.push(callbackUrl); // Redirige après connexion
+    }
+  },[status,session,callbackUrl])
+ 
 
   const handleSubmit = async (e: React.FormEvent)=>{
     e.preventDefault();
     setError(null); // Réinitialiser l'erreur avant l'envoi
-    console.log("form:", email, "  ", password);
+    console.log("handleSubmit:", email, "  ", password);
 
-    setTimeout(()=> console.log("des truc peuvent sortir"),10000)
-    
     try {
+  console.error("⛔ dans le try catch")
 
       const response = await signIn("credentials", {
         email,
         password,
         redirect: false,
       });
+      console.log("la response de SignIn !", response);
 
       if (!response || response.error) {
-        throw new Error(response?.error || "Échec de connexion");
+        throw new Error(response?.error || "⛔Échec de connexion"+response);
       }
       console.log("Connexion réussie !");
     } catch (err: any) {
+        console.error("⛔ Erreur: Email ou mot de passe manquan 11",err)
+      
       console.error("Erreur de connexion:", err);
       setError(err.message); // Stocker le message d'erreur
     }
@@ -58,7 +67,8 @@ export default function Login(){
     </div>
     {/* <!-- /.login-logo --> */}
     <div  className="login-box-body">
-      <p  className="login-box-msg">Sign in to start your session</p>
+      
+      {session ? <p className="login-box-msg">Vous êtes connecté</p> : <p  className="login-box-msg">Sign in to start your session</p>}
       {error && <p className="text-red-500">{error}</p>}
       <form onSubmit={handleSubmit} method="post">
         <div  className="form-group has-feedback">

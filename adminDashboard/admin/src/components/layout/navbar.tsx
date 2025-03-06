@@ -1,3 +1,4 @@
+import LogoutButton from '../UI/button/logoutButton';
 
 
 
@@ -5,7 +6,7 @@ export default function Navbar(){
 
   return (
     
-          <nav className="navbar navbar-static-top" role="navigation">
+          <nav className="bg-gray-800 navbar navbar-static-top" role="navigation">
       {/* <!-- Sidebar toggle button--> */}
       <a href="/" className="sidebar-toggle" data-toggle="offcanvas" role="button">
         <span className="sr-only">Toggle navigation</span>
@@ -243,7 +244,10 @@ export default function Navbar(){
                   <a href="#" className="btn btn-default btn-flat">Profile</a>
                 </div>
                 <div className="pull-right">
-                  <a href="#" className="btn btn-default btn-flat">Sign out</a>
+                  <a href="#" className="btn btn-default btn-flat">
+                    <LogoutButton></LogoutButton>
+                  </a>
+                  {/* Sign out */}
                 </div>
               </li>
             </ul>
