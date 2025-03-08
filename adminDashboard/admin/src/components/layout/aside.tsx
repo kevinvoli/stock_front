@@ -49,9 +49,9 @@ export default function Aside(){
                 <i className="fa fa-dashboard"></i> <span>Log</span> <i className="fa fa-angle-left pull-right"></i>
               </a>
               <ul className="treeview-menu">
-                <li className=""><a href="index.html"><i className="fa fa-circle-o"></i> List log</a></li>
-                <li><a href="logs/journals"><i className="fa fa-circle-o"></i>Journal Service</a></li>
-                <li><a href="#"><i className="fa fa-circle-o"></i>Corbeille</a></li>
+                <li className=""><a href="/logs/userLogs"><i className="fa fa-circle-o"></i> List log</a></li>
+                <li><a href="/logs/journals"><i className="fa fa-circle-o"></i>Journal Service</a></li>
+                <li><a href="/logs/corbeille"><i className="fa fa-circle-o"></i>Corbeille</a></li>
               </ul>
             </li>
             <li className="treeview">
@@ -61,14 +61,13 @@ export default function Aside(){
                 <i className="fa fa-angle-left pull-right"></i>
               </a>
               <ul className="treeview-menu">
-                <li ><a href="index.html"><i className="fa fa-circle-o"></i> Produits</a></li>
-                <li><a href="index2.html"><i className="fa fa-circle-o"></i>Categories Produits</a></li>
-                <li><a href="index2.html"><i className="fa fa-circle-o"></i>Emplacements</a></li>
-                <li><a href="index2.html"><i className="fa fa-circle-o"></i>Mouvements Stock</a></li>
+                <li ><a href="/Stock/Produits"><i className="fa fa-circle-o"></i> Produits</a></li>
+                <li><a href="/Stock/categories_produits"><i className="fa fa-circle-o"></i>Categories Produits</a></li>
+                <li><a href="/Stock/mouvements_stock"><i className="fa fa-circle-o"></i>Mouvements Stock</a></li>
 
-                <li><a href="index2.html"><i className="fa fa-circle-o"></i>Entrepots</a></li>
-                <li><a href="index2.html"><i className="fa fa-circle-o"></i>Rangements</a></li>
-                <li><a href="index2.html"><i className="fa fa-circle-o"></i>Rayons</a></li>
+                <li><a href="/Stock/entrepots"><i className="fa fa-circle-o"></i>Entrepots</a></li>
+                <li><a href="/Stock/rangements"><i className="fa fa-circle-o"></i>Rangements</a></li>
+                <li><a href="/Stock/rayons"><i className="fa fa-circle-o"></i>Rayons</a></li>
               </ul>
             </li>
             <li className="treeview">
@@ -78,10 +77,10 @@ export default function Aside(){
                 <i className="fa fa-angle-left pull-right"></i>
               </a>
               <ul className="treeview-menu">
-                <li><a href="pages/charts/morris.html"><i className="fa fa-circle-o"></i> Fournisseurs</a></li>
-                <li><a href="pages/charts/flot.html"><i className="fa fa-circle-o"></i> Clients</a></li>
-                <li><a href="pages/charts/inline.html"><i className="fa fa-circle-o"></i>  Commandes</a></li>
-                <li><a href="pages/charts/inline.html"><i className="fa fa-circle-o"></i>  Details Commandes</a></li>
+                <li><a href="/commandes/fournisseurs"><i className="fa fa-circle-o"></i> Fournisseurs</a></li>
+                <li><a href="/commandes/clients"><i className="fa fa-circle-o"></i> Clients</a></li>
+                <li><a href="/commandes/commandes"><i className="fa fa-circle-o"></i>  Commandes</a></li>
+                <li><a href="/commandes/details_commandes"><i className="fa fa-circle-o"></i>  Details Commandes</a></li>
               </ul>
             </li>
             <li className="treeview">

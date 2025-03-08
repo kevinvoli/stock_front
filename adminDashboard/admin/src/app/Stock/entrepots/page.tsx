@@ -1,6 +1,8 @@
+"use client";
 import Datatable from "@/components/tables/dataTable";
-import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import BreadCrumb from "@/components/UI/Breadcrumb";
+import { useFetchData } from "@/hooks/useFetchData";
+
 
 type Entrepots = {
 
@@ -11,41 +13,17 @@ type Entrepots = {
   adresse: string | null;
   
 }
+const pageInfo=[
+  { label: "Stock", link: "#" },
+  { label: "entrepots", link: "#" },
+  { label: "Listes" }
+]
+const serviceName= "ServiceStock";
+const moduleName = "entrepots"
+const endpoint  = `gateway?${serviceName ? "service="+serviceName:''}&${moduleName ? "module="+moduleName : ''}`
 export default function Entrepot(){
 
-  const { data: session, status } = useSession(); // Récupérer la session utilisateur
-  const [datalist, setdatalist] = useState<Entrepots[]>([]);
-
-  useEffect(() => {
-      const fetchJournaux = async () => {
-          if (status !== "authenticated") return; // Ne fait rien si l'utilisateur n'est pas connecté
-
-          console.log("🔄 Chargement des journaux...",session?.user?.accessToken);
-          try{
-            const response = await fetch("http://localhost:3003/journal-services", {  // Ton API NestJS
-              method: "GET",
-              headers: { 
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${session?.user?.accessToken}`
-               },
-            });
-            if (!response.ok) {
-              throw new Error(`Erreur HTTP : ${response.status} ${response.statusText}`);
-            }
-            // drgodrogo
-            const data: Entrepots[]  = await response.json();
-            console.log("📜 Journaux reçus :", data);
-            // Vérifie que les données sont un tableau
-            if (!Array.isArray(data )) {
-              throw new Error("Les données reçues ne sont pas un tableau de journaux.");
-            }
-            setdatalist(data);    
-          }catch(error){
-            console.error("❌ Erreur lors du chargement des journaux :", error);
-          }
-      };
-      fetchJournaux();
-  }, [session, status]);
+const {data:dataList, loading, error}= useFetchData<Entrepots[]>(endpoint,"GET");
 
   return (
     <>
@@ -55,11 +33,8 @@ export default function Entrepot(){
             Logs
             <small>Journal Service</small>
           </h1>
-          <ol className="breadcrumb">
-            <li><a href="#"><i className="fa fa-dashboard"></i> Logs</a></li>
-            <li><a href="#">Journal</a></li>
-            <li className="active"> Listes</li>
-          </ol>
+          <BreadCrumb items={pageInfo}/>
+
         </section>
 
         <section className="content">
@@ -67,7 +42,7 @@ export default function Entrepot(){
                 <div className="col-xs-12">
                     <div className="box box-primary">
                         <div className="box-body">
-                        <Datatable tableau={datalist}/> 
+                        <Datatable tableau={dataList}/> 
                         </div>
                     </div>
                 </div>
