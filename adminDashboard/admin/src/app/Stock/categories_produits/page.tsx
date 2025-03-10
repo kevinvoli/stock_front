@@ -1,5 +1,6 @@
 "use client";
 import Datatable from "@/components/tables/dataTable";
+import Box from "@/components/UI/Box";
 import BreadCrumb from "@/components/UI/Breadcrumb";
 import { useFetchData } from "@/hooks/useFetchData";
 import { useSession } from "next-auth/react";
@@ -14,12 +15,6 @@ type Categories = {
   description: string | null;
 
   parentId: number | null;
-
- 
-  parent: Categories;
-
-  categories: Categories[];
-
 }
 const pageInfo=[
   { label: "Stock", link: "#" },
@@ -48,11 +43,9 @@ export default function Categorie(){
         <section className="content">
             <div className="row">
                 <div className="col-xs-12">
-                    <div className="box box-primary">
-                        <div className="box-body">
-                        <Datatable tableau={dataList}/> 
-                        </div>
-                    </div>
+                <Box title="Liste des journaux">
+                {loading ? <p>Chargement...</p> : error ? <p>❌ {error}</p> : <Datatable tableau={dataList} />}
+              </Box>
                 </div>
             </div>
         </section>

@@ -4,8 +4,7 @@ import DataTable from "@/components/tables/dataTable";
 import Box from "@/components/UI/Box";
 import BreadCrumb from "@/components/UI/Breadcrumb";
 import { useFetchData } from "@/hooks/useFetchData";
-import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+
 
 
 
@@ -25,7 +24,7 @@ const pageInfo=[
   { label: "Listes" }
 ]
 const serviceName= "logService";
-const moduleName = "corbeille"
+const moduleName = "corbeille";
 const endpoint  = `gateway?${serviceName ? "service="+serviceName:''}&${moduleName ? "module="+moduleName : ''}`
 
 export default function JournaleService(){
@@ -35,7 +34,7 @@ console.log("🛠 Colonnes détectées1 :",dataList);
 
   return (
     <>
-         <div className="content-wrapper">
+      <div className="content-wrapper">
         <section className="content-header">
           <h1>
             Logs
@@ -46,14 +45,14 @@ console.log("🛠 Colonnes détectées1 :",dataList);
         </section>
 
         <section className="content">
-            <div className="row">
-              <div className="col-xs-12">
+          <div className="row">
+            <div className="col-xs-12">
               <Box title="Liste des journaux">
-              {loading ? <p>Chargement...</p> : error ? <p>❌ {error}</p> : <DataTable tableau={dataList} />}
-            </Box>
-                </div>
-                
+                {loading ? <p>Chargement...</p> : error ? <p>❌ {error}</p> : <DataTable tableau={dataList} />}
+              </Box>
             </div>
+              
+          </div>
         </section>
     </div>
     </>

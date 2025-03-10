@@ -21,7 +21,24 @@ const Datatable : React.FC<TableauProps>=({tableau})=>{
   const totalPages= Math.ceil(tableau.length/itemsPerPage);
   const startIndex = (currentPage -1) * itemsPerPage;
   const currentData = tableau.slice(startIndex, startIndex + itemsPerPage);
+  const handleView = (row: Record<string, any>) => {
+    console.log("🔍 Voir :", row);
+    alert(`Voir l'élément : ${JSON.stringify(row, null, 2)}`);
+  };
 
+  // Fonction pour modifier un élément
+  const handleEdit = (row: Record<string, any>) => {
+    console.log("✏️ Modifier :", row);
+    alert(`Modifier l'élément : ${JSON.stringify(row, null, 2)}`);
+  };
+
+  // Fonction pour supprimer un élément
+  const handleDelete = (row: Record<string, any>) => {
+    console.log("🗑️ Supprimer :", row);
+    if (confirm("Êtes-vous sûr de vouloir supprimer cet élément ?")) {
+      alert(`Élément supprimé : ${JSON.stringify(row, null, 2)}`);
+    }
+  };
 
   return (
     <>
@@ -48,7 +65,14 @@ const Datatable : React.FC<TableauProps>=({tableau})=>{
                         row[col]
                       }
                     </td>
+                    
                   ))}
+                  <td>
+                {/* ✅ Boutons pour Voir, Modifier et Supprimer */}
+                <button className="btn btn-info btn-sm" onClick={() => handleView(row)}>👁 Voir</button>
+                <button className="btn btn-warning btn-sm" onClick={() => handleEdit(row)}>✏ Modifier</button>
+                <button className="btn btn-danger btn-sm" onClick={() => handleDelete(row)}>🗑 Supprimer</button>
+              </td>
                 </tr>
               ))
             }
@@ -77,7 +101,7 @@ const Datatable : React.FC<TableauProps>=({tableau})=>{
         </button>
       </div>
         {/* 🔥 Styles CSS */}
-      <style jsx>{`
+        <style jsx>{`
         .pagination {
           display: flex;
           justify-content: center;
@@ -92,10 +116,30 @@ const Datatable : React.FC<TableauProps>=({tableau})=>{
           color: white;
           cursor: pointer;
           border-radius: 5px;
+          margin: 2px;
         }
         button:disabled {
           background-color: #ccc;
           cursor: not-allowed;
+        }
+        .btn {
+          padding: 5px 8px;
+          margin: 2px;
+          border-radius: 4px;
+          border: none;
+          cursor: pointer;
+        }
+        .btn-info {
+          background-color: #17a2b8;
+          color: white;
+        }
+        .btn-warning {
+          background-color: #ffc107;
+          color: black;
+        }
+        .btn-danger {
+          background-color: #dc3545;
+          color: white;
         }
       `}</style>
     </>
