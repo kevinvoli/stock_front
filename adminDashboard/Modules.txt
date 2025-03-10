@@ -1,3 +1,6 @@
+tap //in commande shell
+npx auth secret 
+
 structure de donne universel:
  { 
         moduleName:"nom_du_module_ou_entite",
