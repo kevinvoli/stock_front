@@ -608,7 +608,7 @@ export default function Button(){
                   <h3 className="box-title">Application Buttons</h3>
                 </div>
                 <div className="box-body">
-                  <p>Add the classes <code>.btn.btn-app</code> to an <code>&lt;a></code> tag to achieve the following:</p>
+                  <p>Add the classes <code>.btn.btn-app</code> to an <code>&lt</code> tag to achieve the following:</p>
                   <a className="btn btn-app">
                     <i className="fa fa-edit"></i> Edit
                   </a>

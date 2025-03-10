@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import "../styles/bootstrap/css/bootstrap.min.css"
+import "@/app/globals.css";
+import "@/styles/bootstrap/css/bootstrap.min.css"
 // import "https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"
 
 // import "http://code.ionicframework.com/ionicons/2.0.0/css/ionicons.min.css"
