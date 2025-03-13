@@ -24,12 +24,12 @@ export default function Users(){
     <div className="content-wrapper">
         <section className="content-header">
           <h1>
-            Utilisateurs
+            Roles
             <small>Panneau de contrôle des utilisateurs</small>
           </h1>
           <ol className="breadcrumb">
             <li><a href="#"><i className="fa fa-dashboard"></i> Accueil</a></li>
-            <li><a href="#">Utilisateurs</a></li>
+            <li><a href="#">roles</a></li>
             <li className="active"> Listes</li>
           </ol>
         </section>

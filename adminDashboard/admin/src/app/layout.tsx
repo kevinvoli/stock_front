@@ -30,9 +30,9 @@ export default function RootLayout({
     <>
        <html lang="fr">
        <body>
-          <SessionProviderWrapper>
+          
           {children}
-          </SessionProviderWrapper>
+          
         </body>
       </html>
      

@@ -11,7 +11,7 @@ const Box = ({title, children}:{title:string; children: React.ReactNode} )=>{
             <div className="box box-primary">
               <div className="box-header">
                 <h5 className=""><a href="/stock/categories_produits/add" ><i className="fa fa-plus" ></i> Ajouter nouveau</a></h5>
-                <div className="box-tools d-flex align-items-center">
+                <div className="box-tools d-flex align-items-center mb-4">
                   <input 
                       type="text" 
                       name="table_search" 
@@ -21,14 +21,12 @@ const Box = ({title, children}:{title:string; children: React.ReactNode} )=>{
                       style={{ width: "170px" , marginTop: "10px"}}
                       />
                   <div className="input-group-btn">
-                      <button className="btn btn-sm btn-default" style={{marginTop: "10px" }}><i className="fa fa-search"></i></button>
+                    <button className="btn btn-sm btn-default" style={{marginTop: "10px", left: "116%" }}><i className="fa fa-search"></i></button>
                   </div>
                   
                 </div>
-                <h3 className="box-title">
-                  {title}
-                </h3>
-                <div className="box body">
+                
+                <div className="box-body">
                   {children}
                 </div>
               </div>

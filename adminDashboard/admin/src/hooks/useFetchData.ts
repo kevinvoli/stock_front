@@ -12,7 +12,7 @@ export function useFetchData<T>(endpoint:string, method:"GET" | "POST" | "PUT" |
 
     useEffect(() => {
         const fetchData = async () => {
-            if (status !== "authenticated") return; // Ne fait rien si l'utilisateur n'est pas connecté
+            //if (status !== "authenticated") return; // Ne fait rien si l'utilisateur n'est pas connecté
             setLoading(true);
             setError(null);
   
@@ -26,7 +26,7 @@ export function useFetchData<T>(endpoint:string, method:"GET" | "POST" | "PUT" |
                 },
                 body: body ? JSON.stringify(body) : undefined,
               };
-              const response = await fetch(`http://localhost:3003/${endpoint}`, options);
+              const response = await fetch(`https://api.escuelajs.co/api/v1/users`, options);
               if (!response.ok) {
                 throw new Error(`Erreur HTTP : ${response.status} ${response.statusText}`);
               }

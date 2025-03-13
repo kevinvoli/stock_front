@@ -2,7 +2,7 @@
 const BreadCrumb = ({items}: {items:{label:string;link?:string}[]})=>{
   return (
     <>
-      <ol className='BreadCrumb'>
+      <ol className='breadcrumb'>
         {
           items.map((item,index)=>(
             <li key={index} className={index === items.length - 1 ? "active": "" }>

@@ -43,17 +43,9 @@ console.log("🛠 Colonnes détectées1 :",dataList);
           <BreadCrumb items={pageInfo}/>
           
         </section>
-
-        <section className="content">
-          <div className="row">
-            <div className="col-xs-12">
-              <Box title="Liste des journaux">
-                {loading ? <p>Chargement...</p> : error ? <p>❌ {error}</p> : <DataTable tableau={dataList} />}
-              </Box>
-            </div>
-              
-          </div>
-        </section>
+        <Box title="Liste des journaux">
+          {loading ? <p>Chargement...</p> : error ? <p>❌ {error}</p> : <DataTable tableau={dataList} />}
+        </Box>
     </div>
     </>
   )

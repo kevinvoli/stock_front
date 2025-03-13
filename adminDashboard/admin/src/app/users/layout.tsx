@@ -22,6 +22,7 @@ import ImportScript from "@/components/layout/importJs";
 import Aside from "@/components/layout/aside";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
+import SessionProviderWrapper from "@/components/SessionProviderWrapper";
 
 
 
@@ -47,7 +48,9 @@ export default function UserLayout({
             <div className="wrapper">
                 <Header />
                 <Aside />
-                {children}
+                <SessionProviderWrapper>
+                  {children}
+                </SessionProviderWrapper>
                 <Footer />
             </div>
             <ImportScript/>
