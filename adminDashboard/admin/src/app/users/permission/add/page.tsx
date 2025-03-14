@@ -2,9 +2,10 @@
 import axios from "axios";
 import { ChangeEvent, FormEvent, useState } from "react"
 import { ToastContainer,toast } from "react-toastify";
+import { Input } from "@/components/forms/input"
+import { Select } from "@/components/forms/select";
 
-
-export default function  AddUserRole () {
+export default function  AddUserPermission () {
     const [formData, setFormData] = useState({
         email: "john@mail.com",
         name: "string",
@@ -21,6 +22,7 @@ export default function  AddUserRole () {
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         setLoading(true);
+        console.error(setFormData)
 
         try{
             const response = await axios.post("https://api.escuelajs.co/api/v1/users", formData);
@@ -36,12 +38,18 @@ export default function  AddUserRole () {
             setLoading(false);
         }
     }
+    const predefinedOptions = [
+        { nom: "Module 1" },
+        { nom: "Module 2" },
+        { nom: "Module 3" },
+        { nom: "Module 4" },
+      ];
 
     return (
         <div className="content-wrapper">
             <section className="content-header">
                 <h1>
-                    Roles
+                    Permissions
                     <small>Panneau de contrôle des utilisateurs</small>
                 </h1>
                 <ol className="breadcrumb">
@@ -61,28 +69,36 @@ export default function  AddUserRole () {
                         <div className="box-body">
                             <div className="row">
                                 <div className="form-group col-md-6">
-                                    <label htmlFor="exampleInputEmail1">Nom</label>
-                                    <input 
-                                    type="name" 
-                                    className="form-control" 
-                                    id="exampleInputEmail1" 
-                                    //value={ formData.name}
-                                    onChange={handleChange}
-                                    placeholder="Entrer votre nom" />
+                                    <Select 
+                                        id="action"
+                                       name="name"
+                                       label="Module"
+                                       value={formData.name}
+                                       options={predefinedOptions}
+                                    />
                                 </div>
                                 <div className="form-group col-md-6">
-                                    <label htmlFor="exampleInputEmail1">description</label>
-                                    <textarea 
-                                    name="email"  
-                                    rows={2} 
-                                    className="form-control" 
-                                    id="exampleInputEmail1" 
-                                    value={ formData.email}
+                                <Input
+                                    label="Action"
+                                    type="text"
+                                    id="exampleInputEmail2"
+                                    name="name"
+                                    value={formData.name}
                                     onChange={handleChange}
-                                    placeholder="Entrer une description" />
+                                    placeholder="Entrez votre action"
+                                />
                                 </div>
                             </div>
-                            
+                            <div className="form-group">
+                                <Select 
+                                    id="role"
+                                    name="name"
+                                    label="Role"
+                                    value={formData.name}
+                                    options={predefinedOptions}
+                                />
+                            </div>
+
                         </div>
 
                         <div className="box-footer">

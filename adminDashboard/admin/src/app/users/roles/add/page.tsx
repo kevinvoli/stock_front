@@ -2,6 +2,7 @@
 import axios from "axios";
 import { ChangeEvent, FormEvent, useState } from "react"
 import { ToastContainer,toast } from "react-toastify";
+import { Input } from "@/components/forms/input"
 
 
 export default function  AddUserRole () {
@@ -61,10 +62,11 @@ export default function  AddUserRole () {
                         <div className="box-body">
                             <div className="row">
                                 <div className="form-group col-md-6">
-                                    <label htmlFor="exampleInputEmail1">Nom</label>
-                                    <input 
-                                    type="name" 
-                                    className="form-control" 
+                                    
+                                    <Input 
+                                    label="Nom"
+                                    name="name"
+                                    type="text" 
                                     id="exampleInputEmail1" 
                                     //value={ formData.name}
                                     onChange={handleChange}
