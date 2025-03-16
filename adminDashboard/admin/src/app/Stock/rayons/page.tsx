@@ -29,8 +29,8 @@ export default function Rayon(){
          <div className="content-wrapper">
         <section className="content-header">
           <h1>
-            Logs
-            <small>Journal Service</small>
+            Rayons
+            <small>Panneau </small>
           </h1>
           <BreadCrumb items={pageInfo}/>
 

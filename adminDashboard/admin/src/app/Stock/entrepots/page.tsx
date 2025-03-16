@@ -30,8 +30,8 @@ const {data:dataList, loading, error}= useFetchData<Entrepots[]>(endpoint,"GET")
          <div className="content-wrapper">
         <section className="content-header">
           <h1>
-            Logs
-            <small>Journal Service</small>
+            Entrepots
+            <small>Panneau </small>
           </h1>
           <BreadCrumb items={pageInfo}/>
 

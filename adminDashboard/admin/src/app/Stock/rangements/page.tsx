@@ -32,8 +32,8 @@ const {data:dataList, loading, error}= useFetchData<Rangements[]>(endpoint,"GET"
          <div className="content-wrapper">
         <section className="content-header">
           <h1>
-            Logs
-            <small>Journal Service</small>
+            Rangements
+            <small>Panneau</small>
           </h1>
           <BreadCrumb items={pageInfo}/>
 

@@ -23,7 +23,7 @@ type Produits = {
 }
 const pageInfo=[
   { label: "Stock", link: "#" },
-  { label: "produit", link: "#" },
+  { label: "produits", link: "#" },
   { label: "Listes" }
 ]
 const serviceName= "ServiceStock";
@@ -38,13 +38,11 @@ const {data:dataList, loading, error}= useFetchData<Produits[]>(endpoint,"GET");
          <div className="content-wrapper">
         <section className="content-header">
           <h1>
-            Logs
-            <small>Journal Service</small>
+            Produits
+            <small>Panneau</small>
           </h1>
           <BreadCrumb items={pageInfo}/>
-
         </section>
-
         <section className="content">
             <div className="row">
                 <div className="col-xs-12">

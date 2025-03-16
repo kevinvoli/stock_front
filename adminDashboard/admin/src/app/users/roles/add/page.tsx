@@ -54,7 +54,6 @@ export default function  AddUserRole () {
             <section className="content">
                 <div className="col-xs-12">
                     <div className="box box-primary">
-                            
                         <div className="box-header">
                         <h3 className="box-title">Ajouter</h3>
                         </div>
@@ -62,7 +61,6 @@ export default function  AddUserRole () {
                         <div className="box-body">
                             <div className="row">
                                 <div className="form-group col-md-6">
-                                    
                                     <Input 
                                     label="Nom"
                                     name="name"
@@ -75,11 +73,11 @@ export default function  AddUserRole () {
                                 <div className="form-group col-md-6">
                                     <label htmlFor="exampleInputEmail1">description</label>
                                     <textarea 
-                                    name="email"  
+                                    name="text"  
                                     rows={2} 
                                     className="form-control" 
                                     id="exampleInputEmail1" 
-                                    value={ formData.email}
+                                    //value={ formData.email}
                                     onChange={handleChange}
                                     placeholder="Entrer une description" />
                                 </div>

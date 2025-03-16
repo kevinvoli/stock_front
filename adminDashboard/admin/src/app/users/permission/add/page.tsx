@@ -71,10 +71,10 @@ export default function  AddUserPermission () {
                                 <div className="form-group col-md-6">
                                     <Select 
                                         id="action"
-                                       name="name"
-                                       label="Module"
-                                       value={formData.name}
-                                       options={predefinedOptions}
+                                        name="name"
+                                        label="Module"
+                                        value={formData.name}
+                                        options={predefinedOptions}
                                     />
                                 </div>
                                 <div className="form-group col-md-6">

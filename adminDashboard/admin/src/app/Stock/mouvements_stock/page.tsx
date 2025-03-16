@@ -45,8 +45,8 @@ export default function Mouvement(){
          <div className="content-wrapper">
         <section className="content-header">
           <h1>
-            Logs
-            <small>Journal Service</small>
+            Mouvement Stock
+            <small> Panneau </small>
           </h1>
           <BreadCrumb items={pageInfo}/>
 
