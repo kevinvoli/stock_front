@@ -15,7 +15,7 @@ export default function Register(){
     e.preventDefault();
     console.log({email,password,name});
     
-    const response = await fetch("http://localhost:3003/gateway/create_user?service=authService&module=auth", {  // Ton API NestJS
+    const response = await fetch("http://localhost:3003/gateway/create_user?service=authService&module=auth", { 
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password, name }),

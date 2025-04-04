@@ -44,7 +44,7 @@ const {data:dataList, loading, error}= useFetchData<Rangements[]>(endpoint,"GET"
                 <div className="col-xs-12">
                     <div className="box box-primary">
                         <div className="box-body">
-                        <Datatable tableau={dataList}/> 
+                        <Datatable tableau={dataList} link="/update"/> 
                         </div>
                     </div>
                 </div>

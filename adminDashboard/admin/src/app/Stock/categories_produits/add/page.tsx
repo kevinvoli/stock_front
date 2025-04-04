@@ -1,9 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 const AjouterCategorie = () => {
+  
+ 
+
   const router = useRouter();
   const [nom, setNom] = useState("");
   const [description, setDescription] = useState("");
@@ -16,16 +19,25 @@ const AjouterCategorie = () => {
    
     const response = await fetch("/api/categories", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.user?.accessToken}`,
+      },
       body: JSON.stringify(newCategorie),
     });
 
     if (response.ok) {
-      router.push("/categories"); // Rediriger vers la liste des catégories
-    } else {
-      alert("Erreur lors de l'ajout");
-    }
+      router.push("/Stock/categories_produits"); // Rediriger vers la liste des catégories
+    } 
+    // console.log(dataList);
+    
+   } catch (error) {
+    console.log(error);
+    
+   }
+  
   };
+
 
   return (
     <div className="max-w-lg mx-auto mt-10 bg-white p-6 rounded-lg shadow-sm">
@@ -49,8 +61,20 @@ const AjouterCategorie = () => {
         <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded-sm">
           Ajouter
         </button>
+        </div>
+       
+        
       </form>
+    
+      
+    
     </div>
+    </div>
+      </section>
+</div>
+    </>
+  
+
   );
 };
 

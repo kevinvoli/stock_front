@@ -30,7 +30,7 @@ export default function ImportScript(){
     {/* <!-- Bootstrap WYSIHTML5 -- /> */}
     <Script  src=" /plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js" type="text/javascript" /> 
     {/* <!-- iCheck -- /> */}
-    <Script  src=" /plugins/iCheck/icheck.min.js" type="text/javascript" /> 
+ 
     {/* <!-- Slimscroll -- /> */}
     <Script  src=" /plugins/slimScroll/jquery.slimscroll.min.js" type="text/javascript" /> 
     {/* <!-- FastClick -- /> */}

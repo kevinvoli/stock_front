@@ -1,15 +1,19 @@
 "use client"
 
+
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 
 interface TableauProps{
   tableau: Record<string, any>[];
+  link:string
 }
 
-const Datatable : React.FC<TableauProps>=({tableau})=>{
+const Datatable : React.FC<TableauProps>=({tableau,link})=>{
   const [currentPage, setCurrentPage]= useState(1);
   const itemsPerPage= 30; //🔥 Nombre d'éléments par page
+  const router = useRouter();
   console.log("🔥 Colonnes détectées :", tableau);
 
   if (!tableau || tableau.length===0) {
@@ -27,9 +31,11 @@ const Datatable : React.FC<TableauProps>=({tableau})=>{
   };
 
   // Fonction pour modifier un élément
-  const handleEdit = (row: Record<string, any>) => {
-    console.log("✏️ Modifier :", row);
-    alert(`Modifier l'élément : ${JSON.stringify(row, null, 2)}`);
+  const handleEdit = (id: Record<string, any>) => {
+    console.log("✏️ Modifier :", id);
+    alert(`Modifier l'élément : ${JSON.stringify(id, null, 2)}`);
+    router.push(`${link}/${id}`)
+
   };
 
   // Fonction pour supprimer un élément
@@ -70,7 +76,7 @@ const Datatable : React.FC<TableauProps>=({tableau})=>{
                   <td>
                 {/* ✅ Boutons pour Voir, Modifier et Supprimer */}
                 <button className="btn btn-info btn-sm" onClick={() => handleView(row)}>👁 Voir</button>
-                <button className="btn btn-warning btn-sm" onClick={() => handleEdit(row)}>✏ Modifier</button>
+                <button className="btn btn-warning btn-sm" onClick={() => handleEdit(row.id)}>✏ Modifier</button>
                 <button className="btn btn-danger btn-sm" onClick={() => handleDelete(row)}>🗑 Supprimer</button>
               </td>
                 </tr>

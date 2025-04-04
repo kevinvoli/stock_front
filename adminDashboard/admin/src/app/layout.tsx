@@ -13,8 +13,14 @@ import "@/styles/plugins/morris/morris.css"
 import "@/styles/plugins/jvectormap/jquery-jvectormap-1.2.2.css"
 import "@/styles/plugins/datepicker/datepicker3.css"
 import "@/styles/plugins/daterangepicker/daterangepicker-bs3.css"
+
+import Header from "@/components/layout/header";
+import Footer from "@/components/layout/footer";
+import Aside from "@/components/layout/aside";
+
 import SessionProviderWrapper from "@/components/SessionProviderWrapper";
 import ImportScript from "@/components/layout/importJs";
+import Head from "@/components/layout/heardComponent";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -29,11 +35,19 @@ export default function RootLayout({
   return (
     <>
        <html lang="fr">
-       <body>
-          <SessionProviderWrapper>
-          {children}
-          </SessionProviderWrapper>
-        </body>
+       <Head/>
+       <body className="skin-blue">
+        <div className="wrapper">
+          <Header/>
+          <Aside/>
+            <SessionProviderWrapper>
+              {children}
+            </SessionProviderWrapper>
+          
+        </div>
+        <Footer/>
+        <ImportScript/>
+      </body>
       </html>
      
     </>
