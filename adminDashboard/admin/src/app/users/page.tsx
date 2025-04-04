@@ -47,8 +47,8 @@ console.log("🛠 Colonnes détectées1 :",dataList);
         <section className="content">
           <div className="row">
             <div className="col-xs-12">
-              <Box title="Liste des journaux">
-                {loading ? <p>Chargement...</p> : error ? <p>❌ {error}</p> : <DataTable tableau={dataList} />}
+              <Box title="Liste des journaux" link="/user/add">
+                {loading ? <p>Chargement...</p> : error ? <p>❌ {error}</p> : <DataTable tableau={dataList} link="/edit"/>}
               </Box>
             </div>
               

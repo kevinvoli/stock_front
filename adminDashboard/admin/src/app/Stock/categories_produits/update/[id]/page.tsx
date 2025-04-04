@@ -1,8 +1,43 @@
+'use client'
+import { useSession } from "next-auth/react";
+import { useParams, useRouter } from "next/navigation"
+import { useEffect, useState } from "react";
+import Categorie from '../../page';
 
 
-
+const pageInfo=[
+    { label: "Logs", link: "#" },
+    { label: "Journal", link: "#" },
+    { label: "Listes" }
+  ]
+  const serviceName= "ServiceStock";
+  const moduleName = "categorie"
+  const endpoint  = `gateway?${serviceName ? "service="+serviceName:''}&${moduleName ? "module="+moduleName : ''}`
 
 export default function  AddUser () {
+    const params = useParams();
+    const {id} = params
+    const {data:session, status} = useSession();
+
+    const [ categories,setCategories] = useState({nom:"",description:"",parentId:""})
+    console.log('sur update id:',id);
+    
+    useEffect(()=>{
+        if (id) {
+             fetch(`http://localhost:3003/gateway/${id}?service=ServiceStock&module=categorie`, {
+                method: "POST",
+                headers: { 
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${session?.user?.accessToken}`,
+                },
+              })
+              .then(res=>res.json())
+              .then(data=>setCategories(data))
+              .catch(err=>err)
+
+        }
+    },[id]);
+
 
     return (
         <div className="content-wrapper">
@@ -13,8 +48,8 @@ export default function  AddUser () {
                 </h1>
                 <ol className="breadcrumb">
                     <li><a href="#"><i className="fa fa-dashboard"></i> Accueil</a></li>
-                    <li><a href="#">Utilisateurs</a></li>
-                    <li className="active"> Listes</li>
+                    <li><a href="#">update</a></li>
+                    <li className="active"> Categorie</li>
                 </ol>
             </section>
             <section className="content">
@@ -22,36 +57,25 @@ export default function  AddUser () {
                     <div className="box box-primary">
                             
                         <div className="box-header">
-                        <h3 className="box-title">Ajouter</h3>
+                        <h3 className="box-title">update</h3>
                         </div>
                         <form role="form">
                         <div className="box-body">
                             <div className="row">
                                 <div className="form-group col-md-6">
                                     <label htmlFor="exampleInputEmail1">Nom</label>
-                                    <input type="name" className="form-control" id="exampleInputEmail1" placeholder="Entrer votre nom" />
+                                    <input type="text" className="form-control" id="exampleInputEmail1" placeholder="Entrer votre nom" />
                                 </div>
                                 <div className="form-group col-md-6">
-                                    <label htmlFor="exampleInputEmail1">Prénom</label>
-                                    <input type="name" className="form-control" id="exampleInputEmail1" placeholder="Entrer votre prénom" />
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="form-group col-md-6">
-                                    <label htmlFor="exampleInputPassword1">Email</label>
-                                    <input type="email" className="form-control" id="exampleInputPassword1" placeholder="Entrer votre email" />
+                                    <label htmlFor="exampleInputEmail1">Description</label>
+                                    <input type="text" className="form-control" id="exampleInputEmail1" placeholder="Entrer votre prénom" />
                                 </div>
                                 <div className="form-group col-md-6">
-                                    <label htmlFor="exampleInputPassword2">Mot de passe</label>
-                                    <input type="password" className="form-control" id="exampleInputPassword2" placeholder="Password" />
+                                    <label htmlFor="exampleInputEmail1">Categorie</label>
+                                    <input type="text" className="form-control" id="exampleInputEmail1" placeholder="Entrer votre prénom" />
                                 </div>
                             </div>
-                            <div className="row">
-                                <div className="form-group col-md-12">
-                                    <label htmlFor="exampleInputPassword1">Role</label>
-                                    <input type="name" className="form-control" id="exampleInputPassword1" placeholder="Password" />
-                                </div>
-                            </div>
+
                             {/* <div className="form-group">
                             <label htmlFor="exampleInputFile">File input</label>
                             <input type="file" id="exampleInputFile" />

@@ -1,7 +1,7 @@
 
 
 
-const Box = ({title, children}:{title:string; children: React.ReactNode} )=>{
+const Box = ({title,link, children}:{title:string;link:string; children: React.ReactNode} )=>{
 
   return (
     <>
@@ -10,7 +10,7 @@ const Box = ({title, children}:{title:string; children: React.ReactNode} )=>{
           <div className="col-xs-12">
             <div className="box box-primary">
               <div className="box-header">
-                <h5 className=""><a href="/stock/categories_produits/add" ><i className="fa fa-plus" ></i> Ajouter nouveau</a></h5>
+                <h5 className=""><a href={link} ><i className="fa fa-plus" ></i> Ajouter nouveau</a></h5>
                 <div className="box-tools d-flex align-items-center">
                   <input 
                       type="text" 

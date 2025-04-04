@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 
 
 export function useFetchData<T>(endpoint:string, method:"GET" | "POST" | "PUT" | "DELETE",body?:any){
+  console.log("le end point",endpoint);
+  
+  
   const {data:session, status} = useSession();
   const [data, setData]= useState<T[]>([]);
   // const [data, setData] = useState<T | null>(null);
