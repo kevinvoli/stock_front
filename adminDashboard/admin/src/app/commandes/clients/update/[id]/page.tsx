@@ -1,64 +1,8 @@
-'use client'
-import { useSession } from "next-auth/react";
-import { useParams, useRouter } from "next/navigation"
-import { useEffect, useState } from "react";
-
-import { getOne, useFetchData } from "@/hooks/useFetchData";
-import BreadCrumb from "@/components/UI/Breadcrumb";
 
 
 
-type Categories = {
-  
-    nom: string;
-  
-    description: string |null ;
-  
-    parentId: number ;
-  }
 
-  const pageInfo=[
-    { label: "Stock", link: "/Stock" },
-    { label: "categorie product", link: "/Stock/categories_produits" },
-    { label: "Ajoute" }
-  ]
-  const serviceName= "ServiceStock";
-  const moduleName = "categorie"
-  const endpoint  = `gateway?${serviceName ? "service="+serviceName:''}&${moduleName ? "module="+moduleName : ''}`
-export default function  UpdateEntrepot () {
-
-    const params = useParams();
-        const {id} = params
-        const {data:session} = useSession();
-        const router = useRouter();
-    
-        const [ categories,setCategories] = useState<Categories>({nom:"",description:"",parentId:0})
-        const [ AllCate,setAllCate] = useState<Categories[]>([{nom:"",description:"",parentId:0}])
-        const {data:Allcategories, loading:loadCat, error:ErrCat} = useFetchData<Categories[]>(`gateway?service=ServiceStock&module=categorie`,"GET")
-    
-        const {data:dataList, loading, error}=  getOne<Categories>(`gateway/${id}?service=ServiceStock&module=categorie`,"GET");
-
-    useEffect(()=>{
-
-        if (Allcategories) {
-            setAllCate(Allcategories)
-            console.log("touter les categorie:", Allcategories);
-        }
-        if (dataList) {   
-            setCategories(dataList)
-        }
-    },[Allcategories,dataList])
-
-
-    const handleChange= async (e: { target: { name: any; value: any; }; })=>{
-        console.log("changement de valeu",e.target);
-        
-        const {name,value}= e.target;
-        setCategories((prev)=>({
-            ...prev,
-            [name]:value
-        }))
-    }
+export default function  AddUser () {
 
     return (
         <div className="content-wrapper">
@@ -67,7 +11,11 @@ export default function  UpdateEntrepot () {
                     Utilisateurs
                     <small>Panneau de contrôle des utilisateurs</small>
                 </h1>
-                <BreadCrumb items={pageInfo}/>
+                <ol className="breadcrumb">
+                    <li><a href="#"><i className="fa fa-dashboard"></i> Accueil</a></li>
+                    <li><a href="#">Utilisateurs</a></li>
+                    <li className="active"> Listes</li>
+                </ol>
             </section>
             <section className="content">
                 <div className="col-xs-12">
@@ -127,5 +75,4 @@ export default function  UpdateEntrepot () {
         </div>
     )
 }
-
 

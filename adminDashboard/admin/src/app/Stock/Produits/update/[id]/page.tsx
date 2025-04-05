@@ -1,8 +1,65 @@
+'use client'
+import { useSession } from "next-auth/react";
+import { useParams, useRouter } from "next/navigation"
+import { useEffect, useState } from "react";
+
+import { getOne, useFetchData } from "@/hooks/useFetchData";
+
+type Categories = {
+  
+    nom: string;
+  
+    description: string |null ;
+  
+    parentId: number ;
+  }
 
 
 
+export default function  UpdateProduits () {
+    const params = useParams();
+    const {id} = params
+    const {data:session} = useSession();
+    const router = useRouter();
 
-export default function  AddUser () {
+    const [ categories,setCategories] = useState<Categories>({nom:"",description:"",parentId:0})
+    const [ AllCate,setAllCate] = useState<Categories[]>([{nom:"",description:"",parentId:0}])
+    const {data:Allcategories, loading:loadCat, error:ErrCat} = useFetchData<Categories[]>(`gateway?service=ServiceStock&module=categorie`,"GET")
+
+    const {data:dataList, loading, error}=  getOne<Categories>(`gateway/${id}?service=ServiceStock&module=categorie`,"GET");
+    useEffect(()=>{
+
+        if (Allcategories) {
+            setAllCate(Allcategories)
+            console.log("touter les categorie:", Allcategories);
+        }
+        if (dataList) {   
+            setCategories(dataList)
+        }
+    },[Allcategories,dataList])
+ 
+    const handleUpdate= async ()=>{
+        await fetch(`http://localhost:3003/gateway/${id}?service=ServiceStock&module=categorie`, {
+            method: "PUT",
+            headers: { 
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${session?.user?.accessToken}`,
+              body:JSON.stringify(categories)
+            },
+          });
+
+          router.push("categories_produits")  
+    }
+
+    const handleChange= async (e: { target: { name: any; value: any; }; })=>{
+        console.log("changement de valeu",e.target);
+        
+        const {name,value}= e.target;
+        setCategories((prev)=>({
+            ...prev,
+            [name]:value
+        }))
+    }
 
     return (
         <div className="content-wrapper">

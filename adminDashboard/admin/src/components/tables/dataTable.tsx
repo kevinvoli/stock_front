@@ -14,7 +14,6 @@ const Datatable : React.FC<TableauProps>=({tableau,link})=>{
   const [currentPage, setCurrentPage]= useState(1);
   const itemsPerPage= 30; //🔥 Nombre d'éléments par page
   const router = useRouter();
-  console.log("🔥 Colonnes détectées :", tableau);
 
   if (!tableau || tableau.length===0) {
     return <p className="text-center text-gray-500">Aucune donnée disponible</p>;
@@ -46,6 +45,29 @@ const Datatable : React.FC<TableauProps>=({tableau,link})=>{
     }
   };
 
+  const renderCellValue = (value: any): React.ReactNode => {
+    if (value === null || value === undefined) return "";
+  
+    // Si c'est un tableau (ex: tags, produits)
+    if (Array.isArray(value)) {
+      if (value.length === 0) return "";
+      return value.map((item, index) => {
+        if (typeof item === "object" && item !== null) {
+          return <span key={index}>{item.nom || "[objet]"}{index < value.length - 1 ? ", " : ""}</span>;
+        }
+        return <span key={index}>{String(item)}{index < value.length - 1 ? ", " : ""}</span>;
+      });
+    }
+  
+    // Si c'est un objet (relation simple)
+    if (typeof value === "object") {
+      return value.nom || "[objet]";
+    }
+  
+    return String(value);
+  };
+  
+
   return (
     <>
              
@@ -59,6 +81,7 @@ const Datatable : React.FC<TableauProps>=({tableau,link})=>{
                 </th>
               ))
             }
+            <th key="action">action</th>
           </tr>
         </thead>
         <tbody>
@@ -67,16 +90,15 @@ const Datatable : React.FC<TableauProps>=({tableau,link})=>{
                 <tr key={rowIndex}>
                   {columns.map((col,colIndex)=>(
                     <td key={`${rowIndex}-${colIndex}`}>
-                      {
-                        row[col]
-                      }
+                    {renderCellValue(row[col])}
                     </td>
                     
                   ))}
-                  <td>
-                {/* ✅ Boutons pour Voir, Modifier et Supprimer */}
+                <td>
                 <button className="btn btn-info btn-sm" onClick={() => handleView(row)}>👁 Voir</button>
-                <button className="btn btn-warning btn-sm" onClick={() => handleEdit(row.id)}>✏ Modifier</button>
+                {row.id !== undefined && (
+                  <button className="btn btn-warning btn-sm" onClick={() => handleEdit(row.id)}>✏ Modifier</button>
+                )}
                 <button className="btn btn-danger btn-sm" onClick={() => handleDelete(row)}>🗑 Supprimer</button>
               </td>
                 </tr>
