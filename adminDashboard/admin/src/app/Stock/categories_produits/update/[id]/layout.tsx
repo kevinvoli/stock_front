@@ -9,14 +9,7 @@ export default function StockLayout({
 }:{children: React.ReactNode}) {
   return (
     <>
-    
- 
-        <SessionProviderWrapper>
-          {children}
-        </SessionProviderWrapper>
-        
-    
-    
+      {children}
     </>
    
   );

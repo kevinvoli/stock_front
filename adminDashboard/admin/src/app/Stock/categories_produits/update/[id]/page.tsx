@@ -2,41 +2,73 @@
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react";
-import Categorie from '../../page';
+
+import { getOne, useFetchData } from "@/hooks/useFetchData";
+
+type Categories = {
+    id?:number;
+    nom: string;
+  
+    description: string |null ;
+    parentId?: number ;
+    parent?:Categories
+  }
 
 
-const pageInfo=[
-    { label: "Logs", link: "#" },
-    { label: "Journal", link: "#" },
-    { label: "Listes" }
-  ]
-  const serviceName= "ServiceStock";
-  const moduleName = "categorie"
-  const endpoint  = `gateway?${serviceName ? "service="+serviceName:''}&${moduleName ? "module="+moduleName : ''}`
-
-export default function  AddUser () {
+export default function  UpdateCategories () {
     const params = useParams();
-    const {id} = params
-    const {data:session, status} = useSession();
+    const {id} = params as {id:string};
+    const {data:session} = useSession();
+    const router = useRouter();
 
-    const [ categories,setCategories] = useState({nom:"",description:"",parentId:""})
-    console.log('sur update id:',id);
-    
+    const [ categories,setCategories] = useState<Categories>({nom:"",description:"",parentId:0})
+    const [ AllCate,setAllCate] = useState<Categories[]>([])
+    const {data:Allcategories, loading:loadCat, error:ErrCat} = useFetchData<Categories[]>(`gateway?service=ServiceStock&module=categorie`,"GET")
+
+    const {data:dataList, loading, error}=  getOne<Categories>(`gateway/${id}?service=ServiceStock&module=categorie`,"GET");
     useEffect(()=>{
-        if (id) {
-             fetch(`http://localhost:3003/gateway/${id}?service=ServiceStock&module=categorie`, {
-                method: "POST",
-                headers: { 
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${session?.user?.accessToken}`,
-                },
-              })
-              .then(res=>res.json())
-              .then(data=>setCategories(data))
-              .catch(err=>err)
 
+        if (Allcategories) {
+            setAllCate(Allcategories)
+            console.log("touter les categorie:", Allcategories);
         }
-    },[id]);
+        if (dataList) {   
+            setCategories(dataList)
+        }
+    },[Allcategories,dataList])
+ 
+    const handleUpdate= async (e:React.FormEvent)=>{
+        e.preventDefault();
+        console.log("transmission de la categorie:",categories);
+        
+        await fetch(`http://localhost:3003/gateway/${id}?service=ServiceStock&module=categorie`, {
+            method: "PATCH",
+            headers: { 
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${session?.user?.accessToken}`,
+            },
+            body:JSON.stringify(categories)
+          })
+          .then(res=>res.json())
+          .then((data)=>{
+            router.push("/categories_produits");
+          })
+          .catch(err=>{
+            console.log("mon erreeur",err);
+          })
+        //   http://localhost:3003/gateway/1?service=ServiceStock&module=categorie
+        //   router.push("categories_produits")  
+    }
+
+    const handleChange= async (e: { target: { name: any; value: any; }; })=>{
+        console.log("changement de valeu",e.target);
+      
+        const {name,value}= e.target;
+        setCategories((prev)=>({
+            ...prev,
+            [name]:name ==="parentId" ? parseInt(value) : value,
+        }));
+    }
 
 
     return (
@@ -59,37 +91,51 @@ export default function  AddUser () {
                         <div className="box-header">
                         <h3 className="box-title">update</h3>
                         </div>
-                        <form role="form">
+                        <form role="form" onSubmit={handleUpdate}>
                         <div className="box-body">
                             <div className="row">
                                 <div className="form-group col-md-6">
-                                    <label htmlFor="exampleInputEmail1">Nom</label>
-                                    <input type="text" className="form-control" id="exampleInputEmail1" placeholder="Entrer votre nom" />
+                                    <label htmlFor="nom">Nom</label>
+                                    <input type="text" className="form-control" id="nom"  name="nom"
+                                    value={categories.nom} 
+                                     onChange={handleChange}
+                                    />
                                 </div>
                                 <div className="form-group col-md-6">
-                                    <label htmlFor="exampleInputEmail1">Description</label>
-                                    <input type="text" className="form-control" id="exampleInputEmail1" placeholder="Entrer votre prénom" />
+                                    <label htmlFor="description">Description</label>
+                                    <input name="description" type="text" className="form-control" id="description" placeholder="Entrer votre prénom" 
+                                    value={categories.description ?categories.description:""  }
+                                    onChange={handleChange}
+                                    />
                                 </div>
+                                
                                 <div className="form-group col-md-6">
-                                    <label htmlFor="exampleInputEmail1">Categorie</label>
-                                    <input type="text" className="form-control" id="exampleInputEmail1" placeholder="Entrer votre prénom" />
+                                <label htmlFor="parentId">
+                                    Categorie parent
+                                </label>
+                                <select 
+                                className="form-control" 
+                                id="parentId" 
+                                name="parentId"
+                                value={categories.parentId}
+                                onChange={handleChange}
+                                >
+                                    <option  value={0}>selectionne une categorie parent
+                                    </option>
+                                    {AllCate.map((categorie)=>(
+                                        <option key={categorie.id} value={categorie.id}>
+                                        {categorie.nom}
+                                      </option>
+                                    ))}
+                                </select>
+                                    
                                 </div>
                             </div>
-
-                            {/* <div className="form-group">
-                            <label htmlFor="exampleInputFile">File input</label>
-                            <input type="file" id="exampleInputFile" />
-                            <p className="help-block">Example block-level help text here.</p>
-                            </div>
-                            <div className="checkbox">
-                            <label htmlFor="">
-                                <input type="checkbox" /> 
-                            </label>
-                            </div> */}
+                           
                         </div>
 
                         <div className="box-footer">
-                            <button type="submit" className="btn btn-primary">Ajouter</button>
+                            <button type="submit"  className="btn btn-primary">Ajouter</button>
                         </div>
                         </form>
                     </div>

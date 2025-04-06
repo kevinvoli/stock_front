@@ -2,6 +2,31 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useFetchData } from "@/hooks/useFetchData";
+import { useSession } from "next-auth/react";
+import BreadCrumb from "@/components/UI/Breadcrumb";
+
+
+type Categories = {
+
+  id?: number;
+
+  nom: string;
+
+  description: string | null;
+
+  parentId?: number | null;
+
+  parent?:Categories;
+}
+const pageInfo=[
+  { label: "Stock", link: "/Stock" },
+  { label: "categorie product", link: "/Stock/categories_produits" },
+  { label: "Ajoute" }
+]
+const serviceName= "ServiceStock";
+const moduleName = "categorie"
+const endpoint  = `gateway?${serviceName ? "service="+serviceName:''}&${moduleName ? "module="+moduleName : ''}`
 
 const AjouterCategorie = () => {
   
@@ -10,14 +35,30 @@ const AjouterCategorie = () => {
   const router = useRouter();
   const [nom, setNom] = useState("");
   const [description, setDescription] = useState("");
+  const [parentId, setParentId] = useState<number>();
 
+  const {data:session, status} = useSession();
+  const [ AllCate,setAllCate] = useState<Categories[]>([])
+  const {data:Allcategories, loading:loadCat, error:ErrCat} = useFetchData<Categories[]>(`gateway?service=ServiceStock&module=categorie`,"GET")
+
+   useEffect(()=>{
+  
+          if (Allcategories) {
+              setAllCate(Allcategories)
+              console.log("touter les categorie:", Allcategories);
+          }
+        
+      },[Allcategories])
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const newCategorie = { nom, description };
+    const newCategorie =await { nom, description,parentId };
+    console.log("les data", newCategorie);
     
-   
-    const response = await fetch("/api/categories", {
+    
+   try {
+ 
+    const response = await fetch("http://localhost:3003/gateway/create?service=ServiceStock&module=categorie", {
       method: "POST",
       headers: { 
         "Content-Type": "application/json",
@@ -40,25 +81,68 @@ const AjouterCategorie = () => {
 
 
   return (
-    <div className="max-w-lg mx-auto mt-10 bg-white p-6 rounded-lg shadow-sm">
-      <h2 className="text-2xl font-bold mb-4">Ajouter une catégorie</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="text"
-          placeholder="Nom de la catégorie"
-          value={nom}
-          onChange={(e) => setNom(e.target.value)}
-          className="w-full p-2 border rounded-sm"
-          required
-        />
-        <textarea
-          placeholder="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="w-full p-2 border rounded-sm"
-          required
-        ></textarea>
-        <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded-sm">
+    <>
+      <div className="content-wrapper">
+      <section className="content-header">
+        <h1>
+            Utilisateurs
+            <small>Panneau de contrôle des utilisateurs</small>
+        </h1>
+        <BreadCrumb items={pageInfo}/>
+      </section>
+      <section className="content">
+      <div className="col-xs-12">
+      <div className="box box-primary ">
+      <div className="box-header">
+        <h3 className="box-title">Ajouter une catégorie</h3>
+      </div>
+      <form onSubmit={handleSubmit} >
+        <div className="box-body">
+          <div className="row">
+          <div className="form-group col-md-6">
+              <label htmlFor="nom">Nom</label>
+              <input type="text" className="form-control" id="nom"  name="nom"
+              value={nom} 
+              required
+              onChange={(e) => setNom(e.target.value)}
+              />
+          </div>
+          <div className="form-group col-md-6">
+              <label htmlFor="description">Description</label>
+              <textarea  className="form-control" id="description"  name="description"
+              value={description} 
+              placeholder="Description"
+              onChange={(e) => setDescription(e.target.value)}
+              ></textarea>
+          </div>
+          <div className="form-group col-md-6">
+            <label htmlFor="parentId">
+                Categorie parent
+            </label>
+            <select 
+            className="form-control" 
+            id="parentId" 
+            name="parentId"
+            value=""
+            onChange={(e)=> setParentId(+e.target.value)}
+            >
+                <option  value={0}>selectionne une categorie parent
+                </option>
+                {AllCate.map((categorie)=>(
+                    <option key={categorie.id} value={categorie.id}>
+                    {categorie.nom}
+                  </option>
+                ))}
+            </select>
+                
+            </div>
+     
+          
+    
+          </div>
+          </div>
+        <div className="box-footer">
+        <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded">
           Ajouter
         </button>
         </div>
