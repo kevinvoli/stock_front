@@ -4,42 +4,22 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useFetchData } from "@/hooks/useFetchData";
 import BreadCrumb from "@/components/UI/Breadcrumb";
+import Box from "@/components/UI/Box";
+import { MouvementStock, Produit } from "@/types/model/entity";
 
 
-export enum typeMouvement {
-  entree= "entrée",
-  sortie = "sortie"
-}
-
-
-type Mouvements = {
-
-  id: number;
-
-  produitId: number | null;
-
-  
-  typeMouvement: typeMouvement;
-
-  quantite: number;
-
-
-  date: Date | null;
-
-  rangementId: number | null;
-}
 const pageInfo=[
-  { label: "mouvements stock", link: "#" },
-  { label: "Corbeille", link: "#" },
+  { label: "Stock", link: "#" },
+  { label: "produit", link: "#" },
   { label: "Listes" }
 ]
 const serviceName= "ServiceStock";
-const moduleName = "mouvements_stock"
+const moduleName = "mouvementsStock"
 const endpoint  = `gateway?${serviceName ? "service="+serviceName:''}&${moduleName ? "module="+moduleName : ''}`
-export default function Mouvement(){
+export default function MouvementStocks(){
 
- const {data:dataList, loading, error}= useFetchData<Mouvements[]>(endpoint,"GET");
- 
+const {data:dataList, loading, error}= useFetchData<MouvementStock[]>(endpoint,"GET");
+
   return (
     <>
          <div className="content-wrapper">
@@ -54,12 +34,10 @@ export default function Mouvement(){
 
         <section className="content">
             <div className="row">
-                <div className="col-xs-12">
-                    <div className="box box-primary">
-                        <div className="box-body">
-                        <Datatable tableau={dataList}/> 
-                        </div>
-                    </div>
+            <div className="col-xs-12">
+                <Box title="Liste des journaux" link="/Stock/mouvements_stock/add">
+                {loading ? <p>Chargement...</p> : error ? <p>❌ {error}</p> : <Datatable tableau={dataList} link="mouvements_stock/update"/>}
+              </Box>
                 </div>
             </div>
         </section>

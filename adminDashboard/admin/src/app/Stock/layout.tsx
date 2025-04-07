@@ -13,24 +13,9 @@ export default function StockLayout({
 }:{children: React.ReactNode}) {
   return (
     <>
-    
-    <html lang="en">
-      <Head/>
-      <body className="skin-blue">
-        <div className="wrapper">
-        <Header/>
-        <Aside/>
         <SessionProviderWrapper>
           {children}
-        </SessionProviderWrapper>
-        <Footer/>
-        </div>
-        <ImportScript/>
-    
-      </body>
-    </html>
-    
-    
+        </SessionProviderWrapper>    
     </>
    
   );

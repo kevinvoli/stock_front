@@ -36,7 +36,7 @@ export default function Index(){
         <section className="content-header">
           <h1>
             Dashboard
-            <small>Control panel</small>
+            <small>Control panel cc</small>
           </h1>
           <ol className="breadcrumb">
             <li><a href="#"><i className="fa fa-dashboard"></i> Home</a></li>

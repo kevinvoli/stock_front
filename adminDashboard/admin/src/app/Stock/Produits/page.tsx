@@ -4,23 +4,10 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useFetchData } from "@/hooks/useFetchData";
 import BreadCrumb from "@/components/UI/Breadcrumb";
+import Box from "@/components/UI/Box";
+import { Produit } from "@/types/model/entity";
 
 
-type Produits = {
-
-  id: number;
-
-  nom: string;
-
-  description: string | null;
-
-  categorieId: number | null;
-
-  stockActuel: number;
-
-  seuilAlerte: number;
-   
-}
 const pageInfo=[
   { label: "Stock", link: "#" },
   { label: "produits", link: "#" },
@@ -29,9 +16,9 @@ const pageInfo=[
 const serviceName= "ServiceStock";
 const moduleName = "produit"
 const endpoint  = `gateway?${serviceName ? "service="+serviceName:''}&${moduleName ? "module="+moduleName : ''}`
-export default function Produit(){
+export default function Produits(){
 
-const {data:dataList, loading, error}= useFetchData<Produits[]>(endpoint,"GET");
+const {data:dataList, loading, error}= useFetchData<Produit[]>(endpoint,"GET");
 
   return (
     <>
@@ -45,12 +32,10 @@ const {data:dataList, loading, error}= useFetchData<Produits[]>(endpoint,"GET");
         </section>
         <section className="content">
             <div className="row">
-                <div className="col-xs-12">
-                    <div className="box box-primary">
-                        <div className="box-body">
-                        <Datatable tableau={dataList}/> 
-                        </div>
-                    </div>
+            <div className="col-xs-12">
+                <Box title="Liste des journaux" link="/Stock/Produits/add">
+                {loading ? <p>Chargement...</p> : error ? <p>❌ {error}</p> : <Datatable tableau={dataList} link="Produits/update"/>}
+              </Box>
                 </div>
             </div>
         </section>

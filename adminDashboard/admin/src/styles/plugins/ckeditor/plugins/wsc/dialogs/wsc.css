@@ -1,4 +1,5 @@
-/*
+@tw-bucket user
+{/*
 Copyright (c) 2003-2012, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.html or http://ckeditor.com/license
 */
@@ -79,4 +80,5 @@ body, td, input, select, textarea
 	padding-top: 4px;
 	border-bottom: #f1f1e3 1px solid;
 	background-color: #f1f1e3;
+}
 }

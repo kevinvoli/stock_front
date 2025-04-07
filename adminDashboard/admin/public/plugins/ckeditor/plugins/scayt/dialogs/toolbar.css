@@ -1,4 +1,5 @@
-a
+@tw-bucket user
+{a
 {
 	text-decoration:none;
 	padding: 2px 4px 4px 6px;
@@ -68,4 +69,5 @@ a.cke_scayt_toogle {
 .scayt_enabled  .cke_scayt_set_off
 {
 	display: inline;
+}
 }

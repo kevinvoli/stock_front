@@ -1,29 +1,23 @@
 "use client";
 import Datatable from "@/components/tables/dataTable";
+import Box from "@/components/UI/Box";
 import BreadCrumb from "@/components/UI/Breadcrumb";
 import { useFetchData } from "@/hooks/useFetchData";
+import { Entrepot } from "@/types/model/entity";
 
 
-type Entrepots = {
 
-  id: number;
-
-  nom: string;
-
-  adresse: string | null;
-  
-}
 const pageInfo=[
   { label: "Stock", link: "#" },
-  { label: "entrepots", link: "#" },
+  { label: "entrepot", link: "#" },
   { label: "Listes" }
 ]
 const serviceName= "ServiceStock";
-const moduleName = "entrepots"
+const moduleName = "entrepot"
 const endpoint  = `gateway?${serviceName ? "service="+serviceName:''}&${moduleName ? "module="+moduleName : ''}`
-export default function Entrepot(){
+export default function Entrepots(){
 
-const {data:dataList, loading, error}= useFetchData<Entrepots[]>(endpoint,"GET");
+const {data:dataList, loading, error}= useFetchData<Entrepot[]>(endpoint,"GET");
 
   return (
     <>
@@ -39,13 +33,11 @@ const {data:dataList, loading, error}= useFetchData<Entrepots[]>(endpoint,"GET")
 
         <section className="content">
             <div className="row">
-                <div className="col-xs-12">
-                    <div className="box box-primary">
-                        <div className="box-body">
-                        <Datatable tableau={dataList}/> 
-                        </div>
-                    </div>
-                </div>
+            <div className="col-xs-12">
+                <Box title="Liste des journaux" link="/Stock/entrepots/add">
+                {loading ? <p>Chargement...</p> : error ? <p>❌ {error}</p> : <Datatable tableau={dataList} link="entrepots/update"/>}
+              </Box>
+            </div>
             </div>
         </section>
     </div>

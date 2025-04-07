@@ -1,7 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import axios from "axios";
+import DataTable from "@/components/tables/dataTable";
+import Box from "@/components/UI/Box";
+import BreadCrumb from "@/components/UI/Breadcrumb";
+import { useFetchData } from "@/hooks/useFetchData";
 
 import Box from "@/components/UI/Box"
 import DataTable from "@/components/tables/dataTable";
@@ -17,28 +19,67 @@ type UserType = {
     role: string
 }
 
+<<<<<<< HEAD
 export default function Users(){
     
     const { data: dataList, loading, error } = useFetchData<UserType[]>("https://api.escuelajs.co/api/v1/users", "GET");
+=======
+
+
+type Users = {
+  id:string,
+  service_source:string,
+  service_cible: number,
+  date: string,
+  temps_reponse:string,
+  created_at: string,
+  status: string,
+}
+
+const pageInfo=[
+  { label: "Logs", link: "#" },
+  { label: "Journal", link: "#" },
+  { label: "Listes" }
+]
+const serviceName= "logService";
+const moduleName = "corbeille";
+const endpoint  = `gateway?${serviceName ? "service="+serviceName:''}&${moduleName ? "module="+moduleName : ''}`
+
+export default function User(){
+  const { data: dataList, loading, error } =  useFetchData<Users[]>(endpoint, "GET");
+
+console.log("🛠 Colonnes détectées1 :",dataList);
+
+>>>>>>> master
   return (
-    <div className="content-wrapper">
+    <>
+      <div className="content-wrapper">
         <section className="content-header">
           <h1>
-            Utilisateurs
-            <small>Panneau de contrôle des utilisateurs</small>
+            Logs
+            <small>Journal Service</small>
           </h1>
-          <ol className="breadcrumb">
-            <li><a href="#"><i className="fa fa-dashboard"></i> Accueil</a></li>
-            <li><a href="#">Utilisateurs</a></li>
-            <li className="active"> Listes</li>
-          </ol>
+          <BreadCrumb items={pageInfo}/>
+          
         </section>
 
+<<<<<<< HEAD
         <Box title="Liste des journaux">
           {loading ? <p>Chargement...</p> : error ? <p>❌ {error}</p> : <DataTable tableau={dataList} />}
         </Box>
+=======
+        <section className="content">
+          <div className="row">
+            <div className="col-xs-12">
+              <Box title="Liste des journaux" link="/user/add">
+                {loading ? <p>Chargement...</p> : error ? <p>❌ {error}</p> : <DataTable tableau={dataList} link="/edit"/>}
+              </Box>
+            </div>
+              
+          </div>
+        </section>
+>>>>>>> master
     </div>
+    </>
   )
 }
-
-

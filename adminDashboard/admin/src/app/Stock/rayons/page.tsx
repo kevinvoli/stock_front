@@ -4,26 +4,23 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useFetchData } from "@/hooks/useFetchData";
 import BreadCrumb from "@/components/UI/Breadcrumb";
+import Box from "@/components/UI/Box";
+import { Rangements, Rayons } from "@/types/model/entity";
 
 
-type Rayons = {
 
-  id: number;
-  nom: string;
-  entrepotId: number | null;
-}
 const pageInfo=[
   { label: "Stock", link: "#" },
-  { label: "rayons", link: "#" },
+  { label: "rayon", link: "#" },
   { label: "Listes" }
 ]
 const serviceName= "ServiceStock";
-const moduleName = "rayons"
+const moduleName = "rayon"
 const endpoint  = `gateway?${serviceName ? "service="+serviceName:''}&${moduleName ? "module="+moduleName : ''}`
 export default function Rayon(){
 
-  const {data:dataList, loading, error}= useFetchData<Rayons[]>(endpoint,"GET");
-  
+const {data:dataList, loading, error}= useFetchData<Rayons[]>(endpoint,"GET");
+
   return (
     <>
          <div className="content-wrapper">
@@ -38,13 +35,11 @@ export default function Rayon(){
 
         <section className="content">
             <div className="row">
-                <div className="col-xs-12">
-                    <div className="box box-primary">
-                        <div className="box-body">
-                        <Datatable tableau={dataList}/> 
-                        </div>
-                    </div>
-                </div>
+              <div className="col-xs-12">
+                <Box title="Liste des Rayon" link="/Stock/rayons/add">
+                {loading ? <p>Chargement...</p> : error ? <p>❌ {error}</p> : <Datatable tableau={dataList} link="rayons/update"/>}
+                </Box>
+              </div>
             </div>
         </section>
     </div>

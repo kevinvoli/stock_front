@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import "../styles/bootstrap/css/bootstrap.min.css"
+import "@/app/globals.css";
+import "@/styles/bootstrap/css/bootstrap.min.css"
 // import "https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"
 
 // import "http://code.ionicframework.com/ionicons/2.0.0/css/ionicons.min.css"
@@ -13,8 +13,14 @@ import "@/styles/plugins/morris/morris.css"
 import "@/styles/plugins/jvectormap/jquery-jvectormap-1.2.2.css"
 import "@/styles/plugins/datepicker/datepicker3.css"
 import "@/styles/plugins/daterangepicker/daterangepicker-bs3.css"
+
+import Header from "@/components/layout/header";
+import Footer from "@/components/layout/footer";
+import Aside from "@/components/layout/aside";
+
 import SessionProviderWrapper from "@/components/SessionProviderWrapper";
 import ImportScript from "@/components/layout/importJs";
+import Head from "@/components/layout/heardComponent";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -29,11 +35,27 @@ export default function RootLayout({
   return (
     <>
        <html lang="fr">
+<<<<<<< HEAD
        <body>
           
           {children}
           
         </body>
+=======
+       <Head/>
+       <body className="skin-blue">
+        <div className="wrapper">
+          <Header/>
+          <Aside/>
+            <SessionProviderWrapper>
+              {children}
+            </SessionProviderWrapper>
+          
+        </div>
+        <Footer/>
+        <ImportScript/>
+      </body>
+>>>>>>> master
       </html>
      
     </>
