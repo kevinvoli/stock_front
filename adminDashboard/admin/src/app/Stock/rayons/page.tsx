@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useFetchData } from "@/hooks/useFetchData";
 import BreadCrumb from "@/components/UI/Breadcrumb";
 import Box from "@/components/UI/Box";
-import { Rangements } from "@/types/model/entity";
+import { Rangements, Rayons } from "@/types/model/entity";
 
 
 
@@ -17,9 +17,9 @@ const pageInfo=[
 const serviceName= "ServiceStock";
 const moduleName = "rayon"
 const endpoint  = `gateway?${serviceName ? "service="+serviceName:''}&${moduleName ? "module="+moduleName : ''}`
-export default function Rangement(){
+export default function Rayon(){
 
-const {data:dataList, loading, error}= useFetchData<Rangements[]>(endpoint,"GET");
+const {data:dataList, loading, error}= useFetchData<Rayons[]>(endpoint,"GET");
 
   return (
     <>
@@ -36,7 +36,7 @@ const {data:dataList, loading, error}= useFetchData<Rangements[]>(endpoint,"GET"
         <section className="content">
             <div className="row">
               <div className="col-xs-12">
-                <Box title="Liste des journaux" link="/Stock/rayons/add">
+                <Box title="Liste des Rayon" link="/Stock/rayons/add">
                 {loading ? <p>Chargement...</p> : error ? <p>❌ {error}</p> : <Datatable tableau={dataList} link="rayons/update"/>}
                 </Box>
               </div>

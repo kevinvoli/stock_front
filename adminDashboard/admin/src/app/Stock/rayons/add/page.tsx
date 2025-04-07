@@ -23,7 +23,7 @@ const AddRayon = () => {
  
 
   const router = useRouter();
-const [ rayon,setProduit] = useState<Rayons>({nom:"",})
+const [ rayon,setProduit] = useState<Rayons>()
 
   const {data:session, status} = useSession();
   const [ AllEntrepot,setAllCate] = useState<Entrepot[]>([])
@@ -65,7 +65,7 @@ const [ rayon,setProduit] = useState<Rayons>({nom:"",})
     const {name,value}= e.target;
     setProduit((prev)=>({
         ...prev,
-        [name]:name ==="parentId" ? parseInt(value) : value,
+        [name]:name ==="entrepotId" ? parseInt(value) : value,
     }));
 }
 
@@ -108,7 +108,7 @@ const [ rayon,setProduit] = useState<Rayons>({nom:"",})
             value={rayon?.entrepotId ?? ""}
             onChange={handleChange}
             >
-                <option  value={0}>selectionne une categorie 
+                <option  value={0}>selectionne un entrpot 
                 </option>
                 {AllEntrepot.map((entreprot)=>(
                     <option key={entreprot.id} value={entreprot.id}>

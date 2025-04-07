@@ -35,8 +35,8 @@ export type Rangements = {
 }
 
 export  type Rayons = {
-  id?:number
-  nom: string;
+  id?:number;
+  nom?: string;
   entrepotId?: number | null;
   entrepot?:Entrepot
 }
