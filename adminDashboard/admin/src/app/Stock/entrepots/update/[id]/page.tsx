@@ -5,17 +5,11 @@ import { useEffect, useState } from "react";
 
 import { getOne, useFetchData } from "@/hooks/useFetchData";
 import BreadCrumb from "@/components/UI/Breadcrumb";
+import { Categories } from "@/types/model/entity";
 
 
 
-type Categories = {
-  
-    nom: string;
-  
-    description: string |null ;
-  
-    parentId: number ;
-  }
+
 
   const pageInfo=[
     { label: "Stock", link: "/Stock" },
@@ -104,16 +98,6 @@ export default function  UpdateEntrepot () {
                                     <input type="name" className="form-control" id="exampleInputPassword1" placeholder="Password" />
                                 </div>
                             </div>
-                            {/* <div className="form-group">
-                            <label htmlFor="exampleInputFile">File input</label>
-                            <input type="file" id="exampleInputFile" />
-                            <p className="help-block">Example block-level help text here.</p>
-                            </div>
-                            <div className="checkbox">
-                            <label htmlFor="">
-                                <input type="checkbox" /> 
-                            </label>
-                            </div> */}
                         </div>
 
                         <div className="box-footer">

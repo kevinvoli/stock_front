@@ -4,15 +4,8 @@ import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react";
 
 import { getOne, useFetchData } from "@/hooks/useFetchData";
+import { Categories, Produit } from "@/types/model/entity";
 
-type Categories = {
-  
-    nom: string;
-  
-    description: string |null ;
-  
-    parentId: number ;
-  }
 
 
 
@@ -22,40 +15,44 @@ export default function  UpdateProduits () {
     const {data:session} = useSession();
     const router = useRouter();
 
-    const [ categories,setCategories] = useState<Categories>({nom:"",description:"",parentId:0})
-    const [ AllCate,setAllCate] = useState<Categories[]>([{nom:"",description:"",parentId:0}])
+    const [ produit,setProduit] = useState<Produit>()
+    const [ categorie,setCategorie] = useState<Categories[]>([{nom:"",description:"",parentId:0}])
     const {data:Allcategories, loading:loadCat, error:ErrCat} = useFetchData<Categories[]>(`gateway?service=ServiceStock&module=categorie`,"GET")
 
-    const {data:dataList, loading, error}=  getOne<Categories>(`gateway/${id}?service=ServiceStock&module=categorie`,"GET");
+    const {data:dataList, loading, error}=  getOne<Produit>(`gateway/${id}?service=ServiceStock&module=categorie`,"GET");
     useEffect(()=>{
 
         if (Allcategories) {
-            setAllCate(Allcategories)
+            setCategorie(Allcategories)
             console.log("touter les categorie:", Allcategories);
         }
         if (dataList) {   
-            setCategories(dataList)
+            setProduit(dataList)
         }
     },[Allcategories,dataList])
  
-    const handleUpdate= async ()=>{
-        await fetch(`http://localhost:3003/gateway/${id}?service=ServiceStock&module=categorie`, {
-            method: "PUT",
+    const handleUpdate= async (e: React.FormEvent)=>{
+        e.preventDefault();
+        const res = await fetch(`http://localhost:3003/gateway/${id}?service=ServiceStock&module=produit`, {
+            method: "PATCH",
             headers: { 
               "Content-Type": "application/json",
               Authorization: `Bearer ${session?.user?.accessToken}`,
-              body:JSON.stringify(categories)
             },
+            body:JSON.stringify(produit)
           });
-
-          router.push("categories_produits")  
+          console.log('les update:',res);
+          
+          if (res.ok) {
+          router.push("/Stock/Produits")  
+          }
     }
 
     const handleChange= async (e: { target: { name: any; value: any; }; })=>{
         console.log("changement de valeu",e.target);
         
         const {name,value}= e.target;
-        setCategories((prev)=>({
+        setProduit((prev)=>({
             ...prev,
             [name]:value
         }))
@@ -79,51 +76,68 @@ export default function  UpdateProduits () {
                     <div className="box box-primary">
                             
                         <div className="box-header">
-                        <h3 className="box-title">Ajouter</h3>
+                            <h3 className="box-title">Ajouter</h3>
                         </div>
-                        <form role="form">
-                        <div className="box-body">
-                            <div className="row">
-                                <div className="form-group col-md-6">
-                                    <label htmlFor="exampleInputEmail1">Nom</label>
-                                    <input type="name" className="form-control" id="exampleInputEmail1" placeholder="Entrer votre nom" />
-                                </div>
-                                <div className="form-group col-md-6">
-                                    <label htmlFor="exampleInputEmail1">Prénom</label>
-                                    <input type="name" className="form-control" id="exampleInputEmail1" placeholder="Entrer votre prénom" />
+                        <form role="form" onSubmit={handleUpdate}>
+                            <div className="box-body">
+                                <div className="row">
+                                    <div className="form-group col-md-6">
+                                        <label htmlFor="nom">Nom</label>
+                                        <input type="text" className="form-control" id="nom"  name="nom"
+                                        value={produit?.nom} 
+                                        required
+                                        onChange={handleChange}
+                                        />
+                                    </div>
+                                    <div className="form-group col-md-6">
+                                        <label htmlFor="description">Description</label>
+                                        <input  className="form-control" id="description"  name="description"
+                                        value={produit?.description ? produit?.description: ""} 
+                                        placeholder="Description"
+                                        onChange={handleChange}
+                                        />
+                                    </div>
+                                    <div className="form-group col-md-6">
+                                        <label htmlFor="stockActuel">stockActuel</label>
+                                        <input  className="form-control" id="stockActuel"  name="stockActuel"
+                                        value={produit?.stockActuel} 
+                                        placeholder="stockActuel"
+                                        onChange={handleChange}
+                                        />
+                                    </div>
+                                    <div className="form-group col-md-6">
+                                        <label htmlFor="seuilAlerte">seuilAlerte</label>
+                                        <textarea  className="form-control" id="description"  name="seuilAlerte"
+                                        value={produit?.seuilAlerte} 
+                                        placeholder="seuilAlerte"
+                                        onChange={handleChange}
+                                        ></textarea>
+                                    </div>
+                                    <div className="form-group col-md-6">
+                                        <label htmlFor="categorieId">
+                                            Categorie produit
+                                        </label>
+                                        <select 
+                                        className="form-control" 
+                                        id="categorieId" 
+                                        name="categorieId"
+                                        value={produit?.categorieId ? produit.categorieId: ""}
+                                        onChange={handleChange}
+                                        >
+                                            <option  value={0}>selectionne une categorie 
+                                            </option>
+                                            {categorie.map((categorie)=>(
+                                                <option key={categorie.id} value={categorie.id}>
+                                                {categorie.nom}
+                                            </option>
+                                            ))}
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="row">
-                                <div className="form-group col-md-6">
-                                    <label htmlFor="exampleInputPassword1">Email</label>
-                                    <input type="email" className="form-control" id="exampleInputPassword1" placeholder="Entrer votre email" />
-                                </div>
-                                <div className="form-group col-md-6">
-                                    <label htmlFor="exampleInputPassword2">Mot de passe</label>
-                                    <input type="password" className="form-control" id="exampleInputPassword2" placeholder="Password" />
-                                </div>
+                            <div className="box-footer">
+                                <button type="submit" className="btn btn-primary">Ajouter</button>
                             </div>
-                            <div className="row">
-                                <div className="form-group col-md-12">
-                                    <label htmlFor="exampleInputPassword1">Role</label>
-                                    <input type="name" className="form-control" id="exampleInputPassword1" placeholder="Password" />
-                                </div>
-                            </div>
-                            {/* <div className="form-group">
-                            <label htmlFor="exampleInputFile">File input</label>
-                            <input type="file" id="exampleInputFile" />
-                            <p className="help-block">Example block-level help text here.</p>
-                            </div>
-                            <div className="checkbox">
-                            <label htmlFor="">
-                                <input type="checkbox" /> 
-                            </label>
-                            </div> */}
-                        </div>
-
-                        <div className="box-footer">
-                            <button type="submit" className="btn btn-primary">Ajouter</button>
-                        </div>
                         </form>
                     </div>
                     

@@ -5,20 +5,10 @@ import { useRouter } from "next/navigation";
 import { useFetchData } from "@/hooks/useFetchData";
 import { useSession } from "next-auth/react";
 import BreadCrumb from "@/components/UI/Breadcrumb";
+import { Rangements, Rayons } from "@/types/model/entity";
 
 
-type Rangements = {
-    id?:number;
-    nom?: string;
-    rayonId?: number;
-    rayon?: Rayons
-}
 
-type Rayons = {
-    id?:number
-    nom: string;
-    entrepotId?: number | null;
-}
 const pageInfo=[
   { label: "Stock", link: "/Stock" },
   { label: "categorie product", link: "/Stock/categories_produits" },
@@ -112,7 +102,7 @@ const [ Rangements,setRangements] = useState<Rangements>()
             className="form-control" 
             id="rayonId" 
             name="rayonId"
-            value=""
+            value={Rangements?.rayonId}
             onChange={handleChange}
             >
                 <option  value={0}>selectionne un rayon 

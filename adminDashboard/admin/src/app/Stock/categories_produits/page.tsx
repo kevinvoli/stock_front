@@ -3,19 +3,11 @@ import Datatable from "@/components/tables/dataTable";
 import Box from "@/components/UI/Box";
 import BreadCrumb from "@/components/UI/Breadcrumb";
 import { useFetchData } from "@/hooks/useFetchData";
+import { Categories } from "@/types/model/entity";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
-type Categories = {
 
-  id: number;
-
-  nom: string;
-
-  description: string | null;
-
-  parentId: number | null;
-}
 const pageInfo=[
   { label: "Stock", link: "Stock" },
   { label: "categorie product", link: "/Stock/categories_produits" },

@@ -5,20 +5,10 @@ import { useRouter } from "next/navigation";
 import { useFetchData } from "@/hooks/useFetchData";
 import { useSession } from "next-auth/react";
 import BreadCrumb from "@/components/UI/Breadcrumb";
+import { Entrepot, Rayons } from "@/types/model/entity";
 
 
-type Entrepot = {
-    id?:number;
-    nom: string;
-    adresse: string | null;
-}
 
-type Rayons = {
-    id?:number
-    nom: string;
-    entrepotId?: number | null;
-    entrepot?:Entrepot
-}
 const pageInfo=[
   { label: "Stock", link: "/Stock" },
   { label: "categorie product", link: "/Stock/categories_produits" },
@@ -61,7 +51,7 @@ const [ rayon,setProduit] = useState<Rayons>({nom:"",})
     });
 
     if (response.ok) {
-      router.push("/Stock/categories_produits"); // Rediriger vers la liste des catégories
+      router.push("/Stock/rayons"); // Rediriger vers la liste des catégories
     } 
     // console.log(dataList);
     
@@ -93,7 +83,7 @@ const [ rayon,setProduit] = useState<Rayons>({nom:"",})
       <div className="col-xs-12">
       <div className="box box-primary ">
       <div className="box-header">
-        <h3 className="box-title">Ajouter une catégorie</h3>
+        <h3 className="box-title">Ajouter un Rayons</h3>
       </div>
       <form onSubmit={handleSubmit} >
         <div className="box-body">
@@ -108,14 +98,14 @@ const [ rayon,setProduit] = useState<Rayons>({nom:"",})
           </div>
           
           <div className="form-group col-md-6">
-            <label htmlFor="categorieId">
-                Categorie parent
+            <label htmlFor="entrepotId">
+                Entrepot
             </label>
             <select 
             className="form-control" 
-            id="categorieId" 
-            name="categorieId"
-            value=""
+            id="entrepotId" 
+            name="entrepotId"
+            value={rayon?.entrepotId ?? ""}
             onChange={handleChange}
             >
                 <option  value={0}>selectionne une categorie 
@@ -128,9 +118,6 @@ const [ rayon,setProduit] = useState<Rayons>({nom:"",})
             </select>
                 
             </div>
-     
-          
-    
           </div>
           </div>
         <div className="box-footer">

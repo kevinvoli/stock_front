@@ -4,38 +4,33 @@ import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react";
 
 import { getOne, useFetchData } from "@/hooks/useFetchData";
+import { Categories, MouvementStock, Produit, Rangements } from "@/types/model/entity";
 
 
 
-type Categories = {
-  
-    nom: string;
-  
-    description: string |null ;
-  
-    parentId: number ;
-  }
+
 export default function  UpdateMouvementStock () {
     const params = useParams();
     const {id} = params
     const {data:session} = useSession();
     const router = useRouter();
 
-    const [ categories,setCategories] = useState<Categories>({nom:"",description:"",parentId:0})
-    const [ AllCate,setAllCate] = useState<Categories[]>([{nom:"",description:"",parentId:0}])
-    const {data:Allcategories, loading:loadCat, error:ErrCat} = useFetchData<Categories[]>(`gateway?service=ServiceStock&module=categorie`,"GET")
+    const [ mouvementStock,setMouvementStock] = useState<MouvementStock>()
+    const [ Allproduit,setProduit] = useState<Produit[]>([])
+    const {data:produit, loading:loadProduit, error:ErrProduit} = useFetchData<Produit[]>(`gateway?service=ServiceStock&module=produit`,"GET")
+    const [ allrengement,setRangemnt] = useState<Rangements[]>([])
+    const {data:rangemnt, loading:loadRangemnt, error:ErrRangemnt} = useFetchData<Rangements[]>(`gateway?service=ServiceStock&module=rangement`,"GET")
 
-    const {data:dataList, loading, error}=  getOne<Categories>(`gateway/${id}?service=ServiceStock&module=categorie`,"GET");
+    const {data:dataList, loading, error}=  getOne<MouvementStock>(`gateway/${id}?service=ServiceStock&module=mouvementsStock`,"GET");
     useEffect(()=>{
 
-        if (Allcategories) {
-            setAllCate(Allcategories)
-            console.log("touter les categorie:", Allcategories);
+        if (produit) {
+            setProduit(produit)
         }
-        if (dataList) {   
-            setCategories(dataList)
+        if (rangemnt) {   
+            setRangemnt(rangemnt)
         }
-    },[Allcategories,dataList])
+    },[produit,rangemnt])
  
     const handleUpdate= async ()=>{
         await fetch(`http://localhost:3003/gateway/${id}?service=ServiceStock&module=categorie`, {
@@ -43,7 +38,7 @@ export default function  UpdateMouvementStock () {
             headers: { 
               "Content-Type": "application/json",
               Authorization: `Bearer ${session?.user?.accessToken}`,
-              body:JSON.stringify(categories)
+              body:JSON.stringify(mouvementStock)
             },
           });
 
@@ -54,7 +49,7 @@ export default function  UpdateMouvementStock () {
         console.log("changement de valeu",e.target);
         
         const {name,value}= e.target;
-        setCategories((prev)=>({
+        setMouvementStock((prev)=>({
             ...prev,
             [name]:value
         }))

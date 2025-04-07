@@ -1,9 +1,11 @@
 
 
 
-
+const serviceName= "ServiceStock";
+const moduleName = "rangement"
+const endpoint  = `gateway?${serviceName ? "service="+serviceName:''}&${moduleName ? "module="+moduleName : ''}`
 export default function  AddUser () {
-
+    
     return (
         <div className="content-wrapper">
             <section className="content-header">

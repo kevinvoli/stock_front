@@ -4,21 +4,14 @@ import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react";
 
 import { getOne, useFetchData } from "@/hooks/useFetchData";
+import { Categories } from "@/types/model/entity";
 
-type Categories = {
-    id?:number;
-    nom: string;
-  
-    description: string |null ;
-    parentId?: number ;
-    parent?:Categories
-  }
 
 
 export default function  UpdateCategories () {
     const params = useParams();
     const {id} = params as {id:string};
-    const {data:session} = useSession();
+    const {data:session} = useSession();    
     const router = useRouter();
 
     const [ categories,setCategories] = useState<Categories>({nom:"",description:"",parentId:0})
@@ -49,9 +42,13 @@ export default function  UpdateCategories () {
             },
             body:JSON.stringify(categories)
           })
-          .then(res=>res.json())
+          .then(res=>{
+            console.log("mon result",res);
+            return res.json()
+          })
           .then((data)=>{
-            router.push("/categories_produits");
+            console.log("mon result",data);
+            // router.push("/categories_produits");
           })
           .catch(err=>{
             console.log("mon erreeur",err);

@@ -5,30 +5,24 @@ import { useRouter } from "next/navigation";
 import { useFetchData } from "@/hooks/useFetchData";
 import { useSession } from "next-auth/react";
 import BreadCrumb from "@/components/UI/Breadcrumb";
+import { Entrepot } from "@/types/model/entity";
 
 
 
 
-type Entrepot = {
-    id?:number;
-    nom: string;
-    adresse?: string | null;
-}
+
 const pageInfo=[
   { label: "Stock", link: "/Stock" },
-  { label: "categorie product", link: "/Stock/categories_produits" },
+  { label: "entrepot", link: "/Stock/categories_produits" },
   { label: "Ajoute" }
 ]
 const serviceName= "ServiceStock";
-const moduleName = "categorie"
+const moduleName = "entrepot"
 const endpoint  = `gateway?${serviceName ? "service="+serviceName:''}&${moduleName ? "module="+moduleName : ''}`
 
 const AddEntrepot = () => {
-  
- 
-
   const router = useRouter();
-const [ entrepot,setProduit] = useState<Entrepot>({nom:"",})
+  const [ entrepot,setProduit] = useState<Entrepot>({nom:"",})
 
   const {data:session, status} = useSession();
 
@@ -36,7 +30,7 @@ const [ entrepot,setProduit] = useState<Entrepot>({nom:"",})
     e.preventDefault();
     const newCategorie =entrepot;
    try {
-    const response = await fetch("http://localhost:3003/gateway/create?service=ServiceStock&module=categorie", {
+    const response = await fetch("http://localhost:3003/gateway/create?service=ServiceStock&module=entrepot", {
       method: "POST",
       headers: { 
         "Content-Type": "application/json",
@@ -46,7 +40,7 @@ const [ entrepot,setProduit] = useState<Entrepot>({nom:"",})
     });
 
     if (response.ok) {
-      router.push("/Stock/categories_produits"); // Rediriger vers la liste des catégories
+      router.push("/Stock/entrepots"); // Rediriger vers la liste des catégories
     } 
     // console.log(dataList);
     
@@ -93,9 +87,9 @@ const [ entrepot,setProduit] = useState<Entrepot>({nom:"",})
           </div>
 
           <div className="form-group col-md-6">
-              <label htmlFor="adress">adress</label>
-              <input type="text" className="form-control" id="adress"  name="adress"
-              value={entrepot?.adresse ? entrepot?.adresse : ""} 
+              <label htmlFor="adresse">adresse</label>
+              <input type="text" className="form-control" id="adresse"  name="adresse"
+              value={entrepot?.adresse ?? "" } 
               required
               onChange={handleChange}
               />
@@ -107,19 +101,12 @@ const [ entrepot,setProduit] = useState<Entrepot>({nom:"",})
           Ajouter
         </button>
         </div>
-       
-        
       </form>
-    
-      
-    
     </div>
     </div>
       </section>
 </div>
     </>
-  
-
   );
 };
 

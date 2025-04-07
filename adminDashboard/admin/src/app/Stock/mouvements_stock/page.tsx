@@ -5,21 +5,20 @@ import { useEffect, useState } from "react";
 import { useFetchData } from "@/hooks/useFetchData";
 import BreadCrumb from "@/components/UI/Breadcrumb";
 import Box from "@/components/UI/Box";
-import { Rangements } from "@/types/model/entity";
-
+import { MouvementStock, Produit } from "@/types/model/entity";
 
 
 const pageInfo=[
   { label: "Stock", link: "#" },
-  { label: "rangements", link: "#" },
+  { label: "produit", link: "#" },
   { label: "Listes" }
 ]
 const serviceName= "ServiceStock";
-const moduleName = "rangement"
+const moduleName = "mouvementsStock"
 const endpoint  = `gateway?${serviceName ? "service="+serviceName:''}&${moduleName ? "module="+moduleName : ''}`
-export default function Rangement(){
+export default function MouvementStocks(){
 
-const {data:dataList, loading, error}= useFetchData<Rangements[]>(endpoint,"GET");
+const {data:dataList, loading, error}= useFetchData<MouvementStock[]>(endpoint,"GET");
 
   return (
     <>
@@ -35,11 +34,11 @@ const {data:dataList, loading, error}= useFetchData<Rangements[]>(endpoint,"GET"
 
         <section className="content">
             <div className="row">
-              <div className="col-xs-12">
-                <Box title="Liste des journaux" link="/Stock/rangements/add">
-                {loading ? <p>Chargement...</p> : error ? <p>❌ {error}</p> : <Datatable tableau={dataList} link="rangements/update"/>}
-                </Box>
-              </div>
+            <div className="col-xs-12">
+                <Box title="Liste des journaux" link="/Stock/mouvements_stock/add">
+                {loading ? <p>Chargement...</p> : error ? <p>❌ {error}</p> : <Datatable tableau={dataList} link="mouvements_stock/update"/>}
+              </Box>
+                </div>
             </div>
         </section>
     </div>

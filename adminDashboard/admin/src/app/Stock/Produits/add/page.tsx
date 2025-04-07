@@ -5,34 +5,10 @@ import { useRouter } from "next/navigation";
 import { useFetchData } from "@/hooks/useFetchData";
 import { useSession } from "next-auth/react";
 import BreadCrumb from "@/components/UI/Breadcrumb";
+import { Categories, Produit } from "@/types/model/entity";
 
 
-type Produit = {
-    id?:number;
 
-    nom: string;
-  
-    description?: string ;
-  
-    categorieId?: number ;
-  
-    stockActuel?: number;
-  
-    seuilAlerte?: number;
-}
-
-type Categories = {
-
-    id?: number;
-  
-    nom: string;
-  
-    description: string ;
-  
-    parentId?: number | null;
-  
-    parent?:Categories;
-  }
 const pageInfo=[
   { label: "Stock", link: "/Stock" },
   { label: "categorie product", link: "/Stock/categories_produits" },
@@ -51,21 +27,19 @@ const [ produit,setProduit] = useState<Produit>({nom:"",})
 
   const {data:session, status} = useSession();
   const [ AllCate,setAllCate] = useState<Categories[]>([])
-  const {data:Allcategories, loading:loadCat, error:ErrCat} = useFetchData<Categories[]>(`gateway?service=ServiceStock&module=produit`,"GET")
+  const {data:Allcategories, loading:loadCat, error:ErrCat} = useFetchData<Categories[]>(`gateway?service=ServiceStock&module=categorie`,"GET")
 
-   useEffect(()=>{
-  
-          if (Allcategories) {
-              setAllCate(Allcategories)
-              console.log("touter les categorie:", Allcategories);
-          }
-        
-      },[Allcategories])
+    useEffect(()=>{
+      if (Allcategories) {
+        setAllCate(Allcategories)
+      }
+    
+    },[Allcategories])
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newCategorie =AllCate;
    try {
-    const response = await fetch("http://localhost:3003/gateway/create?service=ServiceStock&module=categorie", {
+    const response = await fetch("http://localhost:3003/gateway/create?service=ServiceStock&module=produit", {
       method: "POST",
       headers: { 
         "Content-Type": "application/json",
@@ -75,7 +49,7 @@ const [ produit,setProduit] = useState<Produit>({nom:"",})
     });
 
     if (response.ok) {
-      router.push("/Stock/categories_produits"); // Rediriger vers la liste des catégories
+      router.push("/Stock/Produits"); // Rediriger vers la liste des catégories
     } 
     // console.log(dataList);
     
@@ -84,13 +58,14 @@ const [ produit,setProduit] = useState<Produit>({nom:"",})
    }
   };
   const handleChange= async (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement |HTMLTextAreaElement> )=>{
-    console.log("changement de valeu",e.target);
   
     const {name,value}= e.target;
     setProduit((prev)=>({
         ...prev,
-        [name]:name ==="parentId" ? parseInt(value) : value,
+        [name]:name ==="categorieId" ? parseInt(value) : value,
     }));
+    console.log("changement de valeu",produit);
+
 }
 
   return (
@@ -122,19 +97,19 @@ const [ produit,setProduit] = useState<Produit>({nom:"",})
           </div>
           <div className="form-group col-md-6">
               <label htmlFor="description">Description</label>
-              <textarea  className="form-control" id="description"  name="description"
+              <input  className="form-control" id="description"  name="description"
               value={produit?.description ? produit?.description: ""} 
               placeholder="Description"
               onChange={handleChange}
-              ></textarea>
+              />
           </div>
           <div className="form-group col-md-6">
               <label htmlFor="stockActuel">stockActuel</label>
-              <textarea  className="form-control" id="stockActuel"  name="stockActuel"
+              <input  className="form-control" id="stockActuel"  name="stockActuel"
               value={produit?.stockActuel} 
               placeholder="stockActuel"
               onChange={handleChange}
-              ></textarea>
+              />
           </div>
           <div className="form-group col-md-6">
               <label htmlFor="seuilAlerte">seuilAlerte</label>
@@ -146,13 +121,13 @@ const [ produit,setProduit] = useState<Produit>({nom:"",})
           </div>
           <div className="form-group col-md-6">
             <label htmlFor="categorieId">
-                Categorie parent
+                Categorie produit
             </label>
             <select 
             className="form-control" 
             id="categorieId" 
             name="categorieId"
-            value=""
+            value={produit?.categorieId ? produit.categorieId: ""}
             onChange={handleChange}
             >
                 <option  value={0}>selectionne une categorie 

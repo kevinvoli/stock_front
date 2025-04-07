@@ -5,51 +5,11 @@ import { useRouter } from "next/navigation";
 import { useFetchData } from "@/hooks/useFetchData";
 import { useSession } from "next-auth/react";
 import BreadCrumb from "@/components/UI/Breadcrumb";
+import { MouvementStock, Produit, Rangements } from "@/types/model/entity";
+import Rangement from '../../rangements/page';
 
 
-type Produit = {
-    id?:number;
 
-    nom: string;
-  
-    description?: string ;
-  
-    categorieId?: number ;
-  
-    stockActuel?: number;
-  
-    seuilAlerte?: number;
-}
-
-type Rangements = {
-    id?:number;
-    nom?: string;
-    rayonId?: number;
-}
-
-export enum typeMouvement {
-    entree= "entrée",
-    sortie = "sortie"
-  }
-
-type MouvementStock = {
-
-    typeMouvement?:typeMouvement ;
-  
-    
-    quantite?: number;
-  
-   
-    date?: Date ;
-  
-    
-    rangementId?: number | null;
- 
-    rengemnt?: Rangements;
-    produitId?: number;
-
-    produit?: Produit
-  }
 const pageInfo=[
   { label: "Stock", link: "/Stock" },
   { label: "categorie product", link: "/Stock/categories_produits" },
@@ -60,18 +20,15 @@ const moduleName = "categorie"
 const endpoint  = `gateway?${serviceName ? "service="+serviceName:''}&${moduleName ? "module="+moduleName : ''}`
 
 const AddMouvementStock = () => {
-  
- 
-
   const router = useRouter();
-const [ mouvementStock,setMouvementStock] = useState<MouvementStock>()
+  const [ mouvementStock,setMouvementStock] = useState<MouvementStock>()
 
   const {data:session, status} = useSession();
   const [ AllProduit,setAllProduit] = useState<Produit[]>([])
   const {data:produits, loading:loadProduit, error:ErrProduit} = useFetchData<Produit[]>(`gateway?service=ServiceStock&module=produit`,"GET")
 
   const [ AllRangement,setRangemnet] = useState<Rangements[]>([])
-  const {data:rangement, loading:loadCat, error:ErrCat} = useFetchData<Rangements[]>(`gateway?service=ServiceStock&module=produit`,"GET")
+  const {data:rangement, loading:loadCat, error:ErrCat} = useFetchData<Rangements[]>(`gateway?service=ServiceStock&module=rangement`,"GET")
 
 
    useEffect(()=>{
@@ -90,20 +47,26 @@ const [ mouvementStock,setMouvementStock] = useState<MouvementStock>()
     e.preventDefault();
     const newCategorie =mouvementStock;
    try {
-    const response = await fetch("http://localhost:3003/gateway/create?service=ServiceStock&module=categorie", {
+    const response = await fetch("http://localhost:3003/gateway/create?service=ServiceStock&module=mouvementsStock", {
       method: "POST",
       headers: { 
         "Content-Type": "application/json",
         Authorization: `Bearer ${session?.user?.accessToken}`,
       },
       body: JSON.stringify(newCategorie),
-    });
+    }).then(res=>{
+      console.log("creation response avent",res);
 
-    if (response.ok) {
-      router.push("/Stock/categories_produits"); // Rediriger vers la liste des catégories
-    } 
-    // console.log(dataList);
-    
+      return res.json()})
+    .then(data=>{
+      if (data.errors) {
+        throw new Error(data)
+      }
+      console.log("creation response",data);
+      
+      // router.push("/Stock/mouvements_stock"); // Rediriger vers la liste des catégories
+    }).catch(err=>console.log("erreur fetch", err))
+ 
    } catch (error) {
     console.log(error);
    }
@@ -114,7 +77,11 @@ const [ mouvementStock,setMouvementStock] = useState<MouvementStock>()
     const {name,value}= e.target;
     setMouvementStock((prev)=>({
         ...prev,
-        [name]:name ==="parentId" ? parseInt(value) : value,
+        [name]:name ==="parentId" ? 
+              parseInt(value) : 
+              name==="date" ?
+              new Date(value) :
+              value,
     }));
 }
 
@@ -165,16 +132,17 @@ const [ mouvementStock,setMouvementStock] = useState<MouvementStock>()
 
           <div className="form-group col-md-6">
             <label htmlFor="produitId">
-                Categorie parent
+                choisir le produit
             </label>
             <select 
             className="form-control" 
             id="produitId" 
             name="produitId"
-            value=""
-            onChange={handleChange}
+            value={mouvementStock?.produitId?.toString()}
+
+            onChange={(e)=> setMouvementStock({produitId:+ e.target.value})}
             >
-                <option  value={0}>selectionne une categorie 
+                <option  value={0}>selectionne un produit
                 </option>
                 {AllProduit.map((produit)=>(
                     <option key={produit.id} value={produit.id}>
@@ -187,28 +155,23 @@ const [ mouvementStock,setMouvementStock] = useState<MouvementStock>()
 
             <div className="form-group col-md-6">
             <label htmlFor="rangementId">
-                Categorie parent
+                chisir le rangemnt
             </label>
             <select 
             className="form-control" 
             id="rangementId" 
             name="rangementId"
-            value=""
-            onChange={handleChange}
-            >
-                <option  value={0}>selectionne une categorie 
+            value={mouvementStock?.rangementId?.toString()}
+            onChange={(e)=> setMouvementStock({rangementId:+ e.target.value})}>
+                <option  value={0}>selectionne un Rangement 
                 </option>
                 {AllRangement.map((rangement)=>(
                     <option key={rangement.id} value={rangement.id}>
                     {rangement.nom}
                   </option>
                 ))}
-            </select>
-                
+            </select>   
             </div>
-     
-          
-    
           </div>
           </div>
         <div className="box-footer">
@@ -216,12 +179,7 @@ const [ mouvementStock,setMouvementStock] = useState<MouvementStock>()
           Ajouter
         </button>
         </div>
-       
-        
       </form>
-    
-      
-    
     </div>
     </div>
       </section>

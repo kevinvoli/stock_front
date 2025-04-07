@@ -5,20 +5,9 @@ import { useRouter } from "next/navigation";
 import { useFetchData } from "@/hooks/useFetchData";
 import { useSession } from "next-auth/react";
 import BreadCrumb from "@/components/UI/Breadcrumb";
+import { Categories } from "@/types/model/entity";
 
 
-type Categories = {
-
-  id?: number;
-
-  nom: string;
-
-  description: string | null;
-
-  parentId?: number | null;
-
-  parent?:Categories;
-}
 const pageInfo=[
   { label: "Stock", link: "/Stock" },
   { label: "categorie product", link: "/Stock/categories_produits" },
@@ -42,13 +31,11 @@ const AjouterCategorie = () => {
   const {data:Allcategories, loading:loadCat, error:ErrCat} = useFetchData<Categories[]>(`gateway?service=ServiceStock&module=categorie`,"GET")
 
    useEffect(()=>{
-  
-          if (Allcategories) {
-              setAllCate(Allcategories)
-              console.log("touter les categorie:", Allcategories);
-          }
-        
-      },[Allcategories])
+    if (Allcategories) {
+        setAllCate(Allcategories)
+        console.log("touter les categorie:", Allcategories);
+    }   
+  },[Allcategories])
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
