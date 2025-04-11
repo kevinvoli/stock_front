@@ -3,23 +3,26 @@ import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react";
 
-import { getOne, useFetchData } from "@/hooks/useFetchData";
+import { getOne, useAddData, useFetchData } from "@/hooks/useFetchData";
 import { Categories, Produit } from "@/types/model/entity";
+import { RequestData } from "@/types/api/endpoint";
 
 
 
-
+const RequestCategorie = new RequestData("ServiceStock","categorie")
+const RequestProduit = new RequestData("ServiceStock","produit")
 export default function  UpdateProduits () {
     const params = useParams();
-    const {id} = params
+    const {id} = params as {id:string}
+    const { addData, loading:loadUpdate, error:errUpdate } = useAddData();
     const {data:session} = useSession();
     const router = useRouter();
 
     const [ produit,setProduit] = useState<Produit>()
     const [ categorie,setCategorie] = useState<Categories[]>([{nom:"",description:"",parentId:0}])
-    const {data:Allcategories, loading:loadCat, error:ErrCat} = useFetchData<Categories[]>(`gateway?service=ServiceStock&module=categorie`,"GET")
+    const {data:Allcategories, loading:loadCat, error:ErrCat} = useFetchData<Categories[]>(RequestCategorie.endpoint.GET(),"GET")
 
-    const {data:dataList, loading, error}=  getOne<Produit>(`gateway/${id}?service=ServiceStock&module=categorie`,"GET");
+    const {data:dataList, loading, error}=  getOne<Produit>(RequestProduit.endpoint.GETONE(id),"GET");
     useEffect(()=>{
 
         if (Allcategories) {
@@ -33,24 +36,11 @@ export default function  UpdateProduits () {
  
     const handleUpdate= async (e: React.FormEvent)=>{
         e.preventDefault();
-        const res = await fetch(`http://localhost:3003/gateway/${id}?service=ServiceStock&module=produit`, {
-            method: "PATCH",
-            headers: { 
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${session?.user?.accessToken}`,
-            },
-            body:JSON.stringify(produit)
-          });
-          console.log('les update:',res);
-          
-          if (res.ok) {
-          router.push("/Stock/Produits")  
-          }
+        await addData(RequestProduit.endpoint.POST(), "POST","/Stock/Produits", categorie, );
     }
 
     const handleChange= async (e: { target: { name: any; value: any; }; })=>{
-        console.log("changement de valeu",e.target);
-        
+
         const {name,value}= e.target;
         setProduit((prev)=>({
             ...prev,
@@ -122,7 +112,7 @@ export default function  UpdateProduits () {
                                         id="categorieId" 
                                         name="categorieId"
                                         value={produit?.categorieId ? produit.categorieId: ""}
-                                        onChange={handleChange}
+                                        onChange={(e)=>{setProduit({categorieId:+e.target.value})}}
                                         >
                                             <option  value={0}>selectionne une categorie 
                                             </option>

@@ -1,7 +1,10 @@
 "use client";
+import DataTable from "@/components/tables/dataTable";
 import Datatable from "@/components/tables/dataTable";
+import Box from "@/components/UI/Box";
 import BreadCrumb from "@/components/UI/Breadcrumb";
 import { useFetchData } from "@/hooks/useFetchData";
+import { RequestData } from "@/types/api/endpoint";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
@@ -24,16 +27,15 @@ const pageInfo=[
   { label: "user logs", link: "#" },
   { label: "Listes" }
 ]
-const serviceName= "logService";
-const moduleName = "log"
-const endpoint  = `gateway?${serviceName ? "service="+serviceName:''}&${moduleName ? "module="+moduleName : ''}`
+
+const RequestProduit = new RequestData("logService","log")
 export default function Log(){
-const {data:dataList, loading, error}= useFetchData<Logs[]>(endpoint,"GET");
+const {data:dataList, loading, error}= useFetchData<Logs[]>(RequestProduit.endpoint.GET(),"GET");
 
 
   return (
     <>
-         <div className="content-wrapper">
+      <div className="content-wrapper">
         <section className="content-header">
           <h1>
             Logs
@@ -44,17 +46,15 @@ const {data:dataList, loading, error}= useFetchData<Logs[]>(endpoint,"GET");
         </section>
 
         <section className="content">
-            <div className="row">
-                <div className="col-xs-12">
-                    <div className="box box-primary">
-                        <div className="box-body">
-                        <Datatable tableau={dataList} link="/update"/> 
-                        </div>
-                    </div>
-                </div>
+          <div className="row">
+            <div className="col-xs-12">
+              <Box title="Liste des journaux" link="">
+                {loading ? <p>Chargement...</p> : error ? <p>❌ {error}</p> : <DataTable tableau={dataList} link="/update" />}
+              </Box>
             </div>
+          </div>
         </section>
-    </div>
+      </div>
     </>
   )
 }

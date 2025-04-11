@@ -2,10 +2,11 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useFetchData } from "@/hooks/useFetchData";
+import { useAddData, useFetchData } from "@/hooks/useFetchData";
 import { useSession } from "next-auth/react";
 import BreadCrumb from "@/components/UI/Breadcrumb";
 import { Categories, Produit } from "@/types/model/entity";
+import { RequestData } from "@/types/api/endpoint";
 
 
 
@@ -14,20 +15,18 @@ const pageInfo=[
   { label: "categorie product", link: "/Stock/categories_produits" },
   { label: "Ajoute" }
 ]
-const serviceName= "ServiceStock";
-const moduleName = "categorie"
-const endpoint  = `gateway?${serviceName ? "service="+serviceName:''}&${moduleName ? "module="+moduleName : ''}`
+
+const RequestCategorie = new RequestData("ServiceStock","categorie")
+const RequestProduit = new RequestData("ServiceStock","categorie")
 
 const AddProduit = () => {
-  
- 
 
   const router = useRouter();
-const [ produit,setProduit] = useState<Produit>({nom:"",})
-
+  const [ produit,setProduit] = useState<Produit>({nom:"",})
+const { addData, loading, error } = useAddData();
   const {data:session, status} = useSession();
   const [ AllCate,setAllCate] = useState<Categories[]>([])
-  const {data:Allcategories, loading:loadCat, error:ErrCat} = useFetchData<Categories[]>(`gateway?service=ServiceStock&module=categorie`,"GET")
+  const {data:Allcategories, loading:loadCat, error:ErrCat} = useFetchData<Categories[]>(RequestCategorie.endpoint.GET(),"GET")
 
     useEffect(()=>{
       if (Allcategories) {
@@ -35,38 +34,18 @@ const [ produit,setProduit] = useState<Produit>({nom:"",})
       }
     
     },[Allcategories])
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const newCategorie =AllCate;
-   try {
-    const response = await fetch("http://localhost:3003/gateway/create?service=ServiceStock&module=produit", {
-      method: "POST",
-      headers: { 
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user?.accessToken}`,
-      },
-      body: JSON.stringify(newCategorie),
-    });
-
-    if (response.ok) {
-      router.push("/Stock/Produits"); // Rediriger vers la liste des catégories
-    } 
-    // console.log(dataList);
-    
-   } catch (error) {
-    console.log(error);
-   }
-  };
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+      await addData(RequestProduit.endpoint.POST(), "POST","/Stock/Produits", produit, );
+    };
   const handleChange= async (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement |HTMLTextAreaElement> )=>{
   
     const {name,value}= e.target;
     setProduit((prev)=>({
         ...prev,
-        [name]:name ==="categorieId" ? parseInt(value) : value,
+        [name]:value,
     }));
-    console.log("changement de valeu",produit);
-
-}
+  }
 
   return (
     <>
@@ -128,7 +107,7 @@ const [ produit,setProduit] = useState<Produit>({nom:"",})
             id="categorieId" 
             name="categorieId"
             value={produit?.categorieId ? produit.categorieId: ""}
-            onChange={handleChange}
+            onChange={(e)=>{setProduit({categorieId:+e.target.value})}}
             >
                 <option  value={0}>selectionne une categorie 
                 </option>

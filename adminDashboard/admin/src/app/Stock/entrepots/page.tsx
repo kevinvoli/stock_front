@@ -3,6 +3,7 @@ import Datatable from "@/components/tables/dataTable";
 import Box from "@/components/UI/Box";
 import BreadCrumb from "@/components/UI/Breadcrumb";
 import { useFetchData } from "@/hooks/useFetchData";
+import { RequestData } from "@/types/api/endpoint";
 import { Entrepot } from "@/types/model/entity";
 
 
@@ -12,12 +13,10 @@ const pageInfo=[
   { label: "entrepot", link: "#" },
   { label: "Listes" }
 ]
-const serviceName= "ServiceStock";
-const moduleName = "entrepot"
-const endpoint  = `gateway?${serviceName ? "service="+serviceName:''}&${moduleName ? "module="+moduleName : ''}`
+const Request = new RequestData("ServiceStock","entrepot")
 export default function Entrepots(){
 
-const {data:dataList, loading, error}= useFetchData<Entrepot[]>(endpoint,"GET");
+const {data:dataList, loading, error}= useFetchData<Entrepot[]>(Request.endpoint.GET(),"GET");
 
   return (
     <>

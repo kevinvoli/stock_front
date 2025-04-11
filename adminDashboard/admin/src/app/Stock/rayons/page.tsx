@@ -6,6 +6,7 @@ import { useFetchData } from "@/hooks/useFetchData";
 import BreadCrumb from "@/components/UI/Breadcrumb";
 import Box from "@/components/UI/Box";
 import { Rangements, Rayons } from "@/types/model/entity";
+import { RequestData } from "@/types/api/endpoint";
 
 
 
@@ -14,12 +15,10 @@ const pageInfo=[
   { label: "rayon", link: "#" },
   { label: "Listes" }
 ]
-const serviceName= "ServiceStock";
-const moduleName = "rayon"
-const endpoint  = `gateway?${serviceName ? "service="+serviceName:''}&${moduleName ? "module="+moduleName : ''}`
+  const RequestRayon = new RequestData("ServiceStock","rayon")
 export default function Rayon(){
 
-const {data:dataList, loading, error}= useFetchData<Rayons[]>(endpoint,"GET");
+const {data:dataList, loading, error}= useFetchData<Rayons[]>(RequestRayon.endpoint.GET(),"GET");
 
   return (
     <>

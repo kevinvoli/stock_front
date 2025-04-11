@@ -2,10 +2,11 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useFetchData } from "@/hooks/useFetchData";
+import { useAddData, useFetchData } from "@/hooks/useFetchData";
 import { useSession } from "next-auth/react";
 import BreadCrumb from "@/components/UI/Breadcrumb";
 import { Entrepot, Rayons } from "@/types/model/entity";
+import { RequestData } from "@/types/api/endpoint";
 
 
 
@@ -14,58 +15,39 @@ const pageInfo=[
   { label: "categorie product", link: "/Stock/categories_produits" },
   { label: "Ajoute" }
 ]
-const serviceName= "ServiceStock";
-const moduleName = "categorie"
-const endpoint  = `gateway?${serviceName ? "service="+serviceName:''}&${moduleName ? "module="+moduleName : ''}`
+const RequestRayon = new RequestData("ServiceStock","rayon")
+const RequestEntrepot = new RequestData("ServiceStock","entrepot")
 
 const AddRayon = () => {
   
  
 
   const router = useRouter();
-const [ rayon,setProduit] = useState<Rayons>()
-
+  const [ rayon,setRayon] = useState<Rayons>()
+const { addData, loading:loadUpdate, error:errUpdate } = useAddData();
   const {data:session, status} = useSession();
   const [ AllEntrepot,setAllCate] = useState<Entrepot[]>([])
-  const {data:Entrepots, loading:loadCat, error:ErrCat} = useFetchData<Entrepot[]>(`gateway?service=ServiceStock&module=entrepot`,"GET")
+  const {data:Entrepots, loading:loadCat, error:ErrCat} = useFetchData<Entrepot[]>(RequestEntrepot.endpoint.GET(),"GET")
 
-   useEffect(()=>{
+  useEffect(()=>{
   
           if (Entrepots) {
               setAllCate(Entrepots)
-              console.log("touter les categorie:", Entrepots);
           }
         
-      },[Entrepots])
+  },[Entrepots])
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newCategorie =AllEntrepot;
-   try {
-    const response = await fetch("http://localhost:3003/gateway/create?service=ServiceStock&module=rayon", {
-      method: "POST",
-      headers: { 
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user?.accessToken}`,
-      },
-      body: JSON.stringify(newCategorie),
-    });
 
-    if (response.ok) {
-      router.push("/Stock/rayons"); // Rediriger vers la liste des catégories
-    } 
-    // console.log(dataList);
-    
-   } catch (error) {
-    console.log(error);
-   }
+    await addData(RequestRayon.endpoint.POST(), "POST","/Stock/entrepots",  rayon);
   };
   const handleChange= async (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement |HTMLTextAreaElement> )=>{
     console.log("changement de valeu",e.target);
   
     const {name,value}= e.target;
-    setProduit((prev)=>({
+    setRayon((prev)=>({
         ...prev,
-        [name]:name ==="entrepotId" ? parseInt(value) : value,
+        [name]:value,
     }));
 }
 
@@ -106,7 +88,7 @@ const [ rayon,setProduit] = useState<Rayons>()
             id="entrepotId" 
             name="entrepotId"
             value={rayon?.entrepotId ?? ""}
-            onChange={handleChange}
+            onChange={(e)=> setRayon({entrepotId:+ e.target.value})}
             >
                 <option  value={0}>selectionne un entrpot 
                 </option>

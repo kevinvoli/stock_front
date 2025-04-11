@@ -4,6 +4,7 @@ import DataTable from "@/components/tables/dataTable";
 import Box from "@/components/UI/Box";
 import BreadCrumb from "@/components/UI/Breadcrumb";
 import { useFetchData } from "@/hooks/useFetchData";
+import { RequestData } from "@/types/api/endpoint";
 
 
 
@@ -23,9 +24,7 @@ const pageInfo=[
   { label: "Journal", link: "#" },
   { label: "Listes" }
 ]
-const serviceName= "logService";
-const moduleName = "corbeille";
-const endpoint  = `gateway?${serviceName ? "service="+serviceName:''}&${moduleName ? "module="+moduleName : ''}`
+const RequestProduit = new RequestData("logService","journale")
 
 export default function JournaleService(){
   const { data: dataList, loading, error } =  useFetchData<Journal[]>("journal-services", "GET");

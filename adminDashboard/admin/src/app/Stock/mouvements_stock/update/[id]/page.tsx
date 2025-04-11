@@ -3,25 +3,29 @@ import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react";
 
-import { getOne, useFetchData } from "@/hooks/useFetchData";
+import { getOne, useAddData, useFetchData } from "@/hooks/useFetchData";
 import { Categories, MouvementStock, Produit, Rangements } from "@/types/model/entity";
+import { RequestData } from "@/types/api/endpoint";
 
 
 
-
+const RequestMouvement = new RequestData("ServiceStock","mouvementsStock")
+const RequestRangement = new RequestData("ServiceStock","rangement")
+const RequestProduit = new RequestData("ServiceStock","produit")
 export default function  UpdateMouvementStock () {
+     const { addData, loading:loadUpdate, error:errUpdate } = useAddData();
     const params = useParams();
-    const {id} = params
+    const {id} = params as {id:string}
     const {data:session} = useSession();
     const router = useRouter();
 
     const [ mouvementStock,setMouvementStock] = useState<MouvementStock>()
     const [ Allproduit,setProduit] = useState<Produit[]>([])
-    const {data:produit, loading:loadProduit, error:ErrProduit} = useFetchData<Produit[]>(`gateway?service=ServiceStock&module=produit`,"GET")
+    const {data:produit, loading:loadProduit, error:ErrProduit} = useFetchData<Produit[]>(RequestProduit.endpoint.GET(),"GET")
     const [ allrengement,setRangemnt] = useState<Rangements[]>([])
-    const {data:rangemnt, loading:loadRangemnt, error:ErrRangemnt} = useFetchData<Rangements[]>(`gateway?service=ServiceStock&module=rangement`,"GET")
+    const {data:rangemnt, loading:loadRangemnt, error:ErrRangemnt} = useFetchData<Rangements[]>(RequestRangement.endpoint.GET(),"GET")
 
-    const {data:dataList, loading, error}=  getOne<MouvementStock>(`gateway/${id}?service=ServiceStock&module=mouvementsStock`,"GET");
+    const {data:currentData, loading, error}=  getOne<MouvementStock>(RequestMouvement.endpoint.GETONE(id),"GET");
     useEffect(()=>{
 
         if (produit) {
@@ -30,24 +34,20 @@ export default function  UpdateMouvementStock () {
         if (rangemnt) {   
             setRangemnt(rangemnt)
         }
-    },[produit,rangemnt])
+        if (currentData) {   
+            setMouvementStock(currentData)
+        }
+    },[produit,rangemnt,currentData])
  
-    const handleUpdate= async ()=>{
-        await fetch(`http://localhost:3003/gateway/${id}?service=ServiceStock&module=categorie`, {
-            method: "PUT",
-            headers: { 
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${session?.user?.accessToken}`,
-              body:JSON.stringify(mouvementStock)
-            },
-          });
+    const handleUpdate= async (e:React.FormEvent)=>{
+        e.preventDefault();
+        console.log("transmission de la categorie:",mouvementStock);
+        await addData(RequestMouvement.endpoint.PAtCH(id), "POST","/Stock/entrepots",  mouvementStock);
 
-          router.push("categories_produits")  
     }
 
     const handleChange= async (e: { target: { name: any; value: any; }; })=>{
-        console.log("changement de valeu",e.target);
-        
+
         const {name,value}= e.target;
         setMouvementStock((prev)=>({
             ...prev,
@@ -74,32 +74,76 @@ export default function  UpdateMouvementStock () {
                         <div className="box-header">
                         <h3 className="box-title">Ajouter</h3>
                         </div>
-                        <form role="form">
+                        <form role="form" onSubmit={handleUpdate}>
                         <div className="box-body">
-                            <div className="row">
-                                <div className="form-group col-md-6">
-                                    <label htmlFor="exampleInputEmail1">Nom</label>
-                                    <input type="name" className="form-control" id="exampleInputEmail1" placeholder="Entrer votre nom" />
-                                </div>
-                                <div className="form-group col-md-6">
-                                    <label htmlFor="exampleInputEmail1">Prénom</label>
-                                    <input type="name" className="form-control" id="exampleInputEmail1" placeholder="Entrer votre prénom" />
-                                </div>
+                        <div className="row">
+                            <div className="form-group col-md-6">
+                                <label htmlFor="typeMouvement">type de mouvemenkt</label>
+                                <input type="text" className="form-control" id="typeMouvement"  name="typeMouvement"
+                                value={mouvementStock?.typeMouvement} 
+                                required
+                                onChange={handleChange}
+                                />
                             </div>
-                            <div className="row">
-                                <div className="form-group col-md-6">
-                                    <label htmlFor="exampleInputPassword1">Email</label>
-                                    <input type="email" className="form-control" id="exampleInputPassword1" placeholder="Entrer votre email" />
-                                </div>
-                                <div className="form-group col-md-6">
-                                    <label htmlFor="exampleInputPassword2">Mot de passe</label>
-                                    <input type="password" className="form-control" id="exampleInputPassword2" placeholder="Password" />
-                                </div>
+                            <div className="form-group col-md-6">
+                                <label htmlFor="date">date</label>
+                                <input  className="form-control" id="date"  name="date"
+                                type="date"
+                                value={mouvementStock?.date ? mouvementStock?.date: ""} 
+                                placeholder="date"
+                                onChange={handleChange}
+                                />
                             </div>
-                            <div className="row">
-                                <div className="form-group col-md-12">
-                                    <label htmlFor="exampleInputPassword1">Role</label>
-                                    <input type="name" className="form-control" id="exampleInputPassword1" placeholder="Password" />
+                            <div className="form-group col-md-6">
+                                <label htmlFor="stockActuel">stockActuel</label>
+                                <textarea  className="form-control" id="stockActuel"  name="stockActuel"
+                                value={mouvementStock?.quantite} 
+                                placeholder="stockActuel"
+                                onChange={handleChange}
+                                ></textarea>
+                            </div>
+
+                            <div className="form-group col-md-6">
+                                <label htmlFor="produitId">
+                                    choisir le produit
+                                </label>
+                                <select 
+                                className="form-control" 
+                                id="produitId" 
+                                name="produitId"
+                                value={mouvementStock?.produitId?.toString()}
+
+                                onChange={(e)=> setMouvementStock({produitId:+ e.target.value})}
+                                >
+                                    <option  value={0}>selectionne un produit
+                                    </option>
+                                    {Allproduit.map((produit)=>(
+                                        <option key={produit.id} value={produit.id}>
+                                        {produit.nom}
+                                    </option>
+                                    ))}
+                                </select>
+                                    
+                                </div>
+
+                                <div className="form-group col-md-6">
+                                <label htmlFor="rangementId">
+                                    chisir le rangemnt
+                                </label>
+                                <select 
+                                className="form-control" 
+                                id="rangementId" 
+                                name="rangementId"
+                                value={mouvementStock?.rangementId?.toString()}
+                                onChange={(e)=> setMouvementStock({rangementId:+ e.target.value})}>
+                                    <option  value={0}>selectionne un Rangement 
+                                    </option>
+                                    {allrengement.map((rangement)=>(
+                                        <option key={rangement.id} value={rangement.id}>
+                                        {rangement.nom}
+                                    </option>
+                                    ))}
+                                </select>   
                                 </div>
                             </div>
                  

@@ -6,6 +6,7 @@ import { useFetchData } from "@/hooks/useFetchData";
 import BreadCrumb from "@/components/UI/Breadcrumb";
 import Box from "@/components/UI/Box";
 import { MouvementStock, Produit } from "@/types/model/entity";
+import { RequestData } from "@/types/api/endpoint";
 
 
 const pageInfo=[
@@ -13,12 +14,11 @@ const pageInfo=[
   { label: "produit", link: "#" },
   { label: "Listes" }
 ]
-const serviceName= "ServiceStock";
-const moduleName = "mouvementsStock"
-const endpoint  = `gateway?${serviceName ? "service="+serviceName:''}&${moduleName ? "module="+moduleName : ''}`
+
+const Request = new RequestData("ServiceStock","mouvementsStock")
 export default function MouvementStocks(){
 
-const {data:dataList, loading, error}= useFetchData<MouvementStock[]>(endpoint,"GET");
+const {data:dataList, loading, error}= useFetchData<MouvementStock[]>(Request.endpoint.GET(),"GET");
 
   return (
     <>

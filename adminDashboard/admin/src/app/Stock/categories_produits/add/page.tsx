@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useFetchData } from "@/hooks/useFetchData";
+import { useAddData, useFetchData } from "@/hooks/useFetchData";
 import { useSession } from "next-auth/react";
 import BreadCrumb from "@/components/UI/Breadcrumb";
 import { Categories } from "@/types/model/entity";
+import { RequestData } from "@/types/api/endpoint";
+import { link } from "fs";
 
 
 const pageInfo=[
@@ -13,22 +15,14 @@ const pageInfo=[
   { label: "categorie product", link: "/Stock/categories_produits" },
   { label: "Ajoute" }
 ]
-const serviceName= "ServiceStock";
-const moduleName = "categorie"
-const endpoint  = `gateway?${serviceName ? "service="+serviceName:''}&${moduleName ? "module="+moduleName : ''}`
+const Request = new RequestData("ServiceStock","categorie")
 
 const AjouterCategorie = () => {
-  
- 
 
-  const router = useRouter();
-  const [nom, setNom] = useState("");
-  const [description, setDescription] = useState("");
-  const [parentId, setParentId] = useState<number>();
-
-  const {data:session, status} = useSession();
+  const { addData, loading, error } = useAddData();
+  const [ categorie,setCategorie] = useState<Categories>()
   const [ AllCate,setAllCate] = useState<Categories[]>([])
-  const {data:Allcategories, loading:loadCat, error:ErrCat} = useFetchData<Categories[]>(`gateway?service=ServiceStock&module=categorie`,"GET")
+  const {data:Allcategories, loading:loadCat, error:ErrCat} = useFetchData<Categories[]>(Request.endpoint.GET(),"GET")
 
    useEffect(()=>{
     if (Allcategories) {
@@ -38,34 +32,19 @@ const AjouterCategorie = () => {
   },[Allcategories])
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    const newCategorie =await { nom, description,parentId };
-    console.log("les data", newCategorie);
-    
-    
-   try {
- 
-    const response = await fetch("http://localhost:3003/gateway/create?service=ServiceStock&module=categorie", {
-      method: "POST",
-      headers: { 
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user?.accessToken}`,
-      },
-      body: JSON.stringify(newCategorie),
-    });
-
-    if (response.ok) {
-      router.push("/Stock/categories_produits"); // Rediriger vers la liste des catégories
-    } 
-    // console.log(dataList);
-    
-   } catch (error) {
-    console.log(error);
-    
-   }
-  
+    await addData(Request.endpoint.POST(), "POST","#", categorie, );
   };
-
+  // /Stock/categories_produits
+  const handleChange= async (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement |HTMLTextAreaElement> )=>{
+      console.log("changement de valeu",e.target);
+    
+      const {name,value}= e.target;
+      setCategorie((prev)=>({
+          ...prev,
+          [name]:name ==="parentId" ? parseInt(value) : value,
+      }));
+  }
+  
 
   return (
     <>
@@ -89,17 +68,17 @@ const AjouterCategorie = () => {
           <div className="form-group col-md-6">
               <label htmlFor="nom">Nom</label>
               <input type="text" className="form-control" id="nom"  name="nom"
-              value={nom} 
+              value={categorie?.nom} 
               required
-              onChange={(e) => setNom(e.target.value)}
+              onChange={handleChange}
               />
           </div>
           <div className="form-group col-md-6">
               <label htmlFor="description">Description</label>
               <textarea  className="form-control" id="description"  name="description"
-              value={description} 
+              value={categorie?.description ??""} 
               placeholder="Description"
-              onChange={(e) => setDescription(e.target.value)}
+              onChange={handleChange}
               ></textarea>
           </div>
           <div className="form-group col-md-6">
@@ -110,8 +89,8 @@ const AjouterCategorie = () => {
             className="form-control" 
             id="parentId" 
             name="parentId"
-            value=""
-            onChange={(e)=> setParentId(+e.target.value)}
+            value={categorie?.parentId}
+            onChange={(e)=>{setCategorie({parentId:+e.target.value})}}
             >
                 <option  value={0}>selectionne une categorie parent
                 </option>
@@ -120,12 +99,8 @@ const AjouterCategorie = () => {
                     {categorie.nom}
                   </option>
                 ))}
-            </select>
-                
+            </select>    
             </div>
-     
-          
-    
           </div>
           </div>
         <div className="box-footer">
@@ -133,12 +108,7 @@ const AjouterCategorie = () => {
           Ajouter
         </button>
         </div>
-       
-        
       </form>
-    
-      
-    
     </div>
     </div>
       </section>

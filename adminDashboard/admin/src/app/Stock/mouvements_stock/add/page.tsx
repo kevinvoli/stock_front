@@ -2,11 +2,12 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useFetchData } from "@/hooks/useFetchData";
+import { useAddData, useFetchData } from "@/hooks/useFetchData";
 import { useSession } from "next-auth/react";
 import BreadCrumb from "@/components/UI/Breadcrumb";
 import { MouvementStock, Produit, Rangements } from "@/types/model/entity";
 import Rangement from '../../rangements/page';
+import { RequestData } from "@/types/api/endpoint";
 
 
 
@@ -15,20 +16,18 @@ const pageInfo=[
   { label: "categorie product", link: "/Stock/categories_produits" },
   { label: "Ajoute" }
 ]
-const serviceName= "ServiceStock";
-const moduleName = "categorie"
-const endpoint  = `gateway?${serviceName ? "service="+serviceName:''}&${moduleName ? "module="+moduleName : ''}`
-
+const RequestMouvement = new RequestData("ServiceStock","mouvementsStock")
+const RequestRangement = new RequestData("ServiceStock","rangement")
+const RequestProduit = new RequestData("ServiceStock","produit")
 const AddMouvementStock = () => {
   const router = useRouter();
   const [ mouvementStock,setMouvementStock] = useState<MouvementStock>()
-
-  const {data:session, status} = useSession();
+    const { addData, loading, error } = useAddData();
   const [ AllProduit,setAllProduit] = useState<Produit[]>([])
-  const {data:produits, loading:loadProduit, error:ErrProduit} = useFetchData<Produit[]>(`gateway?service=ServiceStock&module=produit`,"GET")
+  const {data:produits, loading:loadProduit, error:ErrProduit} = useFetchData<Produit[]>(RequestProduit.endpoint.GET(),"GET")
 
   const [ AllRangement,setRangemnet] = useState<Rangements[]>([])
-  const {data:rangement, loading:loadCat, error:ErrCat} = useFetchData<Rangements[]>(`gateway?service=ServiceStock&module=rangement`,"GET")
+  const {data:rangement, loading:loadCat, error:ErrCat} = useFetchData<Rangements[]>(RequestRangement.endpoint.GET(),"GET")
 
 
    useEffect(()=>{
@@ -46,30 +45,7 @@ const AddMouvementStock = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newCategorie =mouvementStock;
-   try {
-    const response = await fetch("http://localhost:3003/gateway/create?service=ServiceStock&module=mouvementsStock", {
-      method: "POST",
-      headers: { 
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user?.accessToken}`,
-      },
-      body: JSON.stringify(newCategorie),
-    }).then(res=>{
-      console.log("creation response avent",res);
-
-      return res.json()})
-    .then(data=>{
-      if (data.errors) {
-        throw new Error(data)
-      }
-      console.log("creation response",data);
-      
-      // router.push("/Stock/mouvements_stock"); // Rediriger vers la liste des catégories
-    }).catch(err=>console.log("erreur fetch", err))
- 
-   } catch (error) {
-    console.log(error);
-   }
+    await addData(RequestMouvement.endpoint.POST(), "POST","/Stock/categories_produits", mouvementStock, );
   };
   const handleChange= async (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement |HTMLTextAreaElement> )=>{
     console.log("changement de valeu",e.target);

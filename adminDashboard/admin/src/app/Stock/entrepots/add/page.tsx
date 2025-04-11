@@ -2,10 +2,11 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useFetchData } from "@/hooks/useFetchData";
+import { useAddData, useFetchData } from "@/hooks/useFetchData";
 import { useSession } from "next-auth/react";
 import BreadCrumb from "@/components/UI/Breadcrumb";
 import { Entrepot } from "@/types/model/entity";
+import { RequestData } from "@/types/api/endpoint";
 
 
 
@@ -16,43 +17,20 @@ const pageInfo=[
   { label: "entrepot", link: "/Stock/categories_produits" },
   { label: "Ajoute" }
 ]
-const serviceName= "ServiceStock";
-const moduleName = "entrepot"
-const endpoint  = `gateway?${serviceName ? "service="+serviceName:''}&${moduleName ? "module="+moduleName : ''}`
+const Request = new RequestData("ServiceStock","entrepot")
 
 const AddEntrepot = () => {
   const router = useRouter();
-  const [ entrepot,setProduit] = useState<Entrepot>({nom:"",})
-
-  const {data:session, status} = useSession();
+  const [ entrepot,setEntrepot] = useState<Entrepot>()
+ const { addData, loading, error } = useAddData();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newCategorie =entrepot;
-   try {
-    const response = await fetch("http://localhost:3003/gateway/create?service=ServiceStock&module=entrepot", {
-      method: "POST",
-      headers: { 
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user?.accessToken}`,
-      },
-      body: JSON.stringify(newCategorie),
-    });
-
-    if (response.ok) {
-      router.push("/Stock/entrepots"); // Rediriger vers la liste des catégories
-    } 
-    // console.log(dataList);
-    
-   } catch (error) {
-    console.log(error);
-   }
+    await addData(Request.endpoint.POST(), "POST","/Stock/categories_produits", entrepot, );
   };
-  const handleChange= async (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement |HTMLTextAreaElement> )=>{
-    console.log("changement de valeu",e.target);
-  
+  const handleChange= async (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement |HTMLTextAreaElement> )=>{ 
     const {name,value}= e.target;
-    setProduit((prev)=>({
+    setEntrepot((prev)=>({
         ...prev,
         [name]:name ==="parentId" ? parseInt(value) : value,
     }));

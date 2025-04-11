@@ -73,6 +73,21 @@ export default function Aside(){
             <li className="treeview">
               <a href="#">
                 <i className="fa fa-pie-chart"></i>
+                <span>Administration</span>
+                <i className="fa fa-angle-left pull-right"></i>
+              </a>
+              <ul className="treeview-menu">
+                <li ><a href="/administration/permission"><i className="fa fa-circle-o"></i> Permission</a></li>
+                <li><a href="/administration/ressource"><i className="fa fa-circle-o"></i>Ressource</a></li>
+                <li><a href="/administration/role"><i className="fa fa-circle-o"></i>Admin Group</a></li>
+
+                <li><a href="/administration/users"><i className="fa fa-circle-o"></i>Users</a></li>
+             
+              </ul>
+            </li>
+            <li className="treeview">
+              <a href="#">
+                <i className="fa fa-pie-chart"></i>
                 <span>Commandes</span>
                 <i className="fa fa-angle-left pull-right"></i>
               </a>

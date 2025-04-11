@@ -2,10 +2,11 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useFetchData } from "@/hooks/useFetchData";
+import { useAddData, useFetchData } from "@/hooks/useFetchData";
 import { useSession } from "next-auth/react";
 import BreadCrumb from "@/components/UI/Breadcrumb";
 import { Rangements, Rayons } from "@/types/model/entity";
+import { RequestData } from "@/types/api/endpoint";
 
 
 
@@ -14,18 +15,17 @@ const pageInfo=[
   { label: "categorie product", link: "/Stock/categories_produits" },
   { label: "Ajoute" }
 ]
-const serviceName= "ServiceStock";
-const moduleName = "categorie"
-const endpoint  = `gateway?${serviceName ? "service="+serviceName:''}&${moduleName ? "module="+moduleName : ''}`
 
+const RequestRayon = new RequestData("ServiceStock","rayon")
+const RequestRangement = new RequestData("ServiceStock","rangement")
 const AddRengement = () => {
 
   const router = useRouter();
 const [ Rangements,setRangements] = useState<Rangements>()
-
+    const { addData, loading, error } = useAddData();
   const {data:session, status} = useSession();
   const [ royon,setRayon] = useState<Rayons[]>([])
-  const {data:AllRayons, loading:loadCat, error:ErrCat} = useFetchData<Rayons[]>(`gateway?service=ServiceStock&module=rayon`,"GET")
+  const {data:AllRayons, loading:loadCat, error:ErrCat} = useFetchData<Rayons[]>(RequestRayon.endpoint.GET(),"GET")
 
    useEffect(()=>{
   
@@ -36,25 +36,7 @@ const [ Rangements,setRangements] = useState<Rangements>()
       },[AllRayons])
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newCategorie =royon;
-   try {
-    const response = await fetch("http://localhost:3003/gateway/create?service=ServiceStock&module=rangement", {
-      method: "POST",
-      headers: { 
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.user?.accessToken}`,
-      },
-      body: JSON.stringify(newCategorie),
-    });
-
-    if (response.ok) {
-      router.push("/Stock/categories_produits"); // Rediriger vers la liste des catégories
-    } 
-    // console.log(dataList);
-    
-   } catch (error) {
-    console.log(error);
-   }
+    await addData(RequestRangement.endpoint.POST(), "POST","/Stock/rangements", Rangements, );
   };
   const handleChange= async (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement |HTMLTextAreaElement> )=>{
     console.log("changement de valeu",e.target);
@@ -62,7 +44,7 @@ const [ Rangements,setRangements] = useState<Rangements>()
     const {name,value}= e.target;
     setRangements((prev)=>({
         ...prev,
-        [name]:name ==="parentId" ? parseInt(value) : value,
+        [name]: value,
     }));
 }
 
@@ -103,7 +85,7 @@ const [ Rangements,setRangements] = useState<Rangements>()
             id="rayonId" 
             name="rayonId"
             value={Rangements?.rayonId}
-            onChange={handleChange}
+            onChange={(e)=> setRangements({rayonId:+ e.target.value})}
             >
                 <option  value={0}>selectionne un rayon 
                 </option>

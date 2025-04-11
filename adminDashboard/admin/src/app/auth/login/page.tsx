@@ -16,7 +16,7 @@ export default function Login(){
 
 
   const router = useRouter();
-
+  console.error("⛔ session je suis arrive")
   useEffect(()=>{
   console.error("⛔ session",session)
 
@@ -60,7 +60,6 @@ export default function Login(){
   }
   return (
     <>
-<body  className="login-page">
   <div  className="login-box">
     <div  className="login-logo">
       <a href="../../index2.html"><b>Admin</b>LTE</a>
@@ -116,7 +115,6 @@ export default function Login(){
   {/* <!-- iCheck --> */}
   <script src="/plugins/iCheck/icheck.min.js" type="text/javascript"></script>
 
-</body>
 
     </>
   )

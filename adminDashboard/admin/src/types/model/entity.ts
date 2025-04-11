@@ -1,15 +1,15 @@
 export type Categories = {
   id?:number;
-  nom: string;
+  nom?: string;
 
-  description: string |null ;
+  description?: string |null ;
   parentId?: number ;
   parent?:Categories
 }
 
 export type Entrepot = {
   id?:number;
-  nom: string;
+  nom?: string;
   adresse?: string ;
 }
 
@@ -68,20 +68,20 @@ export type Permission = {
   action: string;
 
   
-  resource: string;
+  resource?: string;
 
   
-  conditions: Record<string, any>;
+  conditions?: Record<string, any>;
   
-  isAdmin: boolean | null; 
+  isAdmin?: boolean | null; 
 }
 
 export type Role= {
   
-  name: string;
+  nom?: string;
 
   
-  description: string;
+  description?: string;
   
 }
 
@@ -89,67 +89,59 @@ export type data ={
 
   
   
-  serviceName:string;
+  serviceName?:string;
 
   
   
-  moduleName:string;
+  moduleName?:string;
 
   
 
-  data:{}|null;
+  data?:{}|null;
 
   
   
-  method:string;
+  method?:string;
 
   
   
-  serviceSource:string;
+  serviceSource?:string;
 }
 
 export type  Corbeille= {
-
-  
-  Id:number
-
-  
-  
-  typeElement: string | null;
-
-  
-  
-  contenu: string | null;
+  Id?:number
+  typeElement?: string | null;
+  contenu?: string | null;
 }
 
 
 export type Log= {
     
   
-  userId: number | null;
+  userId?: number | null;
 
 
-  Id: number | null;
+  Id?: number | null;
 
   
-  typeAction: string | null;
+  typeAction?: string | null;
 
  
-  module: string | null;
+  module?: string | null;
 
-  description: string | null;
+  description?: string | null;
 
  
 }
 
 export type Users = {
-  id:string,
-  service_source:string,
-  service_cible: number,
-  date: string,
-  temps_reponse:string,
-  created_at: string,
-  status: string,
+  id?:string,
+  service_source?:string,
+  service_cible?: number,
+  date?: string,
+  temps_reponse?:string,
+  created_at?: string,
+  status?: string,
 }
 
 export type Fournisseur = {

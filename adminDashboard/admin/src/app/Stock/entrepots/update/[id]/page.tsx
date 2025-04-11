@@ -3,9 +3,10 @@ import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react";
 
-import { getOne, useFetchData } from "@/hooks/useFetchData";
+import { getOne, useAddData, useFetchData } from "@/hooks/useFetchData";
 import BreadCrumb from "@/components/UI/Breadcrumb";
-import { Categories } from "@/types/model/entity";
+import { Categories, Entrepot } from "@/types/model/entity";
+import { RequestData } from "@/types/api/endpoint";
 
 
 
@@ -16,42 +17,42 @@ import { Categories } from "@/types/model/entity";
     { label: "categorie product", link: "/Stock/categories_produits" },
     { label: "Ajoute" }
   ]
-  const serviceName= "ServiceStock";
-  const moduleName = "categorie"
-  const endpoint  = `gateway?${serviceName ? "service="+serviceName:''}&${moduleName ? "module="+moduleName : ''}`
+const Request = new RequestData("ServiceStock","entrepot")
 export default function  UpdateEntrepot () {
 
     const params = useParams();
-        const {id} = params
-        const {data:session} = useSession();
-        const router = useRouter();
-    
-        const [ categories,setCategories] = useState<Categories>({nom:"",description:"",parentId:0})
-        const [ AllCate,setAllCate] = useState<Categories[]>([{nom:"",description:"",parentId:0}])
-        const {data:Allcategories, loading:loadCat, error:ErrCat} = useFetchData<Categories[]>(`gateway?service=ServiceStock&module=categorie`,"GET")
-    
-        const {data:dataList, loading, error}=  getOne<Categories>(`gateway/${id}?service=ServiceStock&module=categorie`,"GET");
+    const {id} = params as {id:string}
+    const {data:session} = useSession();
+    const router = useRouter();
+const { addData, loading:loadupdate, error:errorupdate } = useAddData();
+    const [ entrepot,setEntrepot] = useState<Entrepot>()
+
+    const {data:currentData, loading, error}=  getOne<Categories>(Request.endpoint.GETONE(id),"GET");
 
     useEffect(()=>{
-
-        if (Allcategories) {
-            setAllCate(Allcategories)
-            console.log("touter les categorie:", Allcategories);
+  
+        if (currentData) {   
+            setEntrepot(currentData)
         }
-        if (dataList) {   
-            setCategories(dataList)
-        }
-    },[Allcategories,dataList])
+    },[currentData])
 
 
     const handleChange= async (e: { target: { name: any; value: any; }; })=>{
         console.log("changement de valeu",e.target);
         
         const {name,value}= e.target;
-        setCategories((prev)=>({
+        setEntrepot((prev)=>({
             ...prev,
             [name]:value
         }))
+    }
+
+    const handleUpdate= async (e:React.FormEvent)=>{
+        e.preventDefault();
+        console.log("transmission de la categorie:",entrepot);
+        
+        await addData(Request.endpoint.POST(), "POST","/Stock/entrepots",  entrepot);
+
     }
 
     return (
@@ -70,34 +71,31 @@ export default function  UpdateEntrepot () {
                         <div className="box-header">
                         <h3 className="box-title">Ajouter</h3>
                         </div>
-                        <form role="form">
+                        <form role="form" onSubmit={handleUpdate}>
                         <div className="box-body">
                             <div className="row">
                                 <div className="form-group col-md-6">
-                                    <label htmlFor="exampleInputEmail1">Nom</label>
-                                    <input type="name" className="form-control" id="exampleInputEmail1" placeholder="Entrer votre nom" />
+                                    <label htmlFor="nom">{entrepot?.nom}</label>
+                                    <input type="name" className="form-control" 
+                                    id="nom" 
+                                    placeholder="Entrer votre nom" 
+                                    value={entrepot?.nom}
+                                    name="nom"
+                                    onChange={handleChange}
+                                    />
                                 </div>
                                 <div className="form-group col-md-6">
-                                    <label htmlFor="exampleInputEmail1">Prénom</label>
-                                    <input type="name" className="form-control" id="exampleInputEmail1" placeholder="Entrer votre prénom" />
+                                    <label htmlFor="adresse">{entrepot?.adresse}</label>
+                                    <input type="name" className="form-control" 
+                                    id="adresse" 
+                                    placeholder="Entrer votre prénom"
+                                    value={entrepot?.adresse}
+                                    name="adresse"
+                                    onChange={handleChange}
+                                    />
                                 </div>
                             </div>
-                            <div className="row">
-                                <div className="form-group col-md-6">
-                                    <label htmlFor="exampleInputPassword1">Email</label>
-                                    <input type="email" className="form-control" id="exampleInputPassword1" placeholder="Entrer votre email" />
-                                </div>
-                                <div className="form-group col-md-6">
-                                    <label htmlFor="exampleInputPassword2">Mot de passe</label>
-                                    <input type="password" className="form-control" id="exampleInputPassword2" placeholder="Password" />
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="form-group col-md-12">
-                                    <label htmlFor="exampleInputPassword1">Role</label>
-                                    <input type="name" className="form-control" id="exampleInputPassword1" placeholder="Password" />
-                                </div>
-                            </div>
+                       
                         </div>
 
                         <div className="box-footer">

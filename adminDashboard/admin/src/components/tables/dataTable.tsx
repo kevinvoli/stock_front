@@ -45,6 +45,12 @@ const Datatable : React.FC<TableauProps>=({tableau,link})=>{
     }
   };
 
+  const options = {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
   const renderCellValue = (value: any): React.ReactNode => {
     if (value === null || value === undefined) return "";
   
@@ -58,7 +64,15 @@ const Datatable : React.FC<TableauProps>=({tableau,link})=>{
         return <span key={index}>{String(item)}{index < value.length - 1 ? ", " : ""}</span>;
       });
     }
-  
+    let lundi = new Date(value)
+
+    if (typeof lundi==="object" && lundi.toDateString()!=="Invalid Date" && lundi.toLocaleDateString() !=="01/01/1970" ) {
+      console.log("ma nouvel data",lundi.toDateString());
+      
+      return lundi.toLocaleDateString() || "[objet]";
+    }
+
+    // Date.prototype.toDateString()
     // Si c'est un objet (relation simple)
     if (typeof value === "object") {
       return value.nom || "[objet]";
@@ -94,12 +108,12 @@ const Datatable : React.FC<TableauProps>=({tableau,link})=>{
                     </td>
                     
                   ))}
-                <td>
-                <button className="btn btn-info btn-sm" onClick={() => handleView(row)}>👁 Voir</button>
+                <td style={{display:"flex",flexDirection:"row"}}>
+                <button className="btn btn-info btn-sm" onClick={() => handleView(row)}>👁</button>
                 {row.id !== undefined && (
-                  <button className="btn btn-warning btn-sm" onClick={() => handleEdit(row.id)}>✏ Modifier</button>
+                  <button className="btn btn-warning btn-sm" onClick={() => handleEdit(row.id)}>✏</button>
                 )}
-                <button className="btn btn-danger btn-sm" onClick={() => handleDelete(row)}>🗑 Supprimer</button>
+                <button className="btn btn-danger btn-sm" onClick={() => handleDelete(row)}>🗑</button>
               </td>
                 </tr>
               ))

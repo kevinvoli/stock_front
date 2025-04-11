@@ -3,19 +3,19 @@ import DataTable from "@/components/tables/dataTable";
 import Box from "@/components/UI/Box";
 import BreadCrumb from "@/components/UI/Breadcrumb";
 import { useFetchData } from "@/hooks/useFetchData";
-import { Corbeilles } from "@/types/corbeille";
+import { RequestData } from "@/types/api/endpoint";
+import { Corbeille } from "@/types/model/entity";
 
 const pageInfo=[
   { label: "Logs", link: "#" },
   { label: "Corbeille", link: "#" },
   { label: "Listes" }
 ]
-const serviceName= "logService";
-const moduleName = "corbeille"
-const endpoint  = `gateway?${serviceName ? "service="+serviceName:''}&${moduleName ? "module="+moduleName : ''}`
-// /gateway?service=authService&module=auth
-export default function Corbeille(){
-  const {data:dataList, loading, error}= useFetchData<Corbeilles[]>(endpoint,"GET");
+
+
+const RequestProduit = new RequestData("logService","corbeille")
+export default function Corbeilles(){
+  const {data:dataList, loading, error}= useFetchData<Corbeille[]>(RequestProduit.endpoint.GET(),"GET");
 
   return (
     <>

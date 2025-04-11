@@ -3,9 +3,8 @@ import Datatable from "@/components/tables/dataTable";
 import Box from "@/components/UI/Box";
 import BreadCrumb from "@/components/UI/Breadcrumb";
 import { useFetchData } from "@/hooks/useFetchData";
+import { RequestData } from "@/types/api/endpoint";
 import { Categories } from "@/types/model/entity";
-import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
 
 
 const pageInfo=[
@@ -13,12 +12,11 @@ const pageInfo=[
   { label: "categorie product", link: "/Stock/categories_produits" },
   { label: "Listes" }
 ]
-const serviceName= "ServiceStock";
-const moduleName = "categorie"
-const endpoint  = `gateway?${serviceName ? "service="+serviceName:''}&${moduleName ? "module="+moduleName : ''}`
+
+const categorie = new RequestData("ServiceStock","categorie")
 export default function Categorie(){
 
- const {data:dataList, loading, error}=  useFetchData<Categories[]>(endpoint,"GET");
+ const {data:dataList, loading, error}=  useFetchData<Categories[]>(categorie.endpoint.GET(),"GET");
  
 console.log("🛠 Colonnes détectées1 :",dataList);
   return (

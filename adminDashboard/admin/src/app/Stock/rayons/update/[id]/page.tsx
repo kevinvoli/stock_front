@@ -1,6 +1,7 @@
 "use client";
 
-import { useFetchData } from "@/hooks/useFetchData";
+import { getOne, useAddData, useFetchData } from "@/hooks/useFetchData";
+import { RequestData } from "@/types/api/endpoint";
 import { Entrepot, Rayons } from "@/types/model/entity";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
@@ -13,53 +14,41 @@ const pageInfo=[
     { label: "categorie product", link: "/Stock/categories_produits" },
     { label: "Ajoute" }
   ]
-  const serviceName= "ServiceStock";
-  const moduleName = "rayon"
-  const endpoint  = `gateway?${serviceName ? "service="+serviceName:''}&${moduleName ? "module="+moduleName : ''}`
+  const RequestRayon = new RequestData("ServiceStock","rayon")
+  const RequestEntrepot = new RequestData("ServiceStock","entrepot")
 export default function  UpdateRayons () {
-     const params = useParams();
-        const {id} = params
-  const router = useRouter();
-const [ rayon,setProduit] = useState<Rayons>({nom:"",})
+    const params = useParams();
+    const {id} = params as {id:string}
+    const { addData, loading, error } = useAddData();
+    const router = useRouter();
+    const [ rayon,setRayon] = useState<Rayons>({nom:"",})
 
-  const {data:session, status} = useSession();
-  const [ AllEntrepot,setAllCate] = useState<Entrepot[]>([])
-  const {data:Entrepots, loading:loadCat, error:ErrCat} = useFetchData<Entrepot[]>(`gateway?service=ServiceStock&module=entrepot`,"GET")
+    const {data:session, status} = useSession();
+    const [ AllEntrepot,setAllCate] = useState<Entrepot[]>([])
+    const {data:Entrepots, loading:loadCat, error:ErrCat} = useFetchData<Entrepot[]>(RequestEntrepot.endpoint.GET(),"GET")
+    const {data:currentData, loading:loadCurrent, error:errCurrent}=  getOne<Rayons>(RequestRayon.endpoint.GETONE(id),"GET");
 
-  useEffect(()=>{
-    
-            if (Entrepots) {
-                setAllCate(Entrepots)
-                console.log("touter les categorie:", Entrepots);
-            }
-          
-        },[Entrepots])
+    useEffect(()=>{
+        if (Entrepots) {
+            setAllCate(Entrepots)
+        }
+        if (currentData) {   
+            setRayon(currentData)
+        }
+    },[Entrepots,currentData])
 
         
           const handleChange= async (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement |HTMLTextAreaElement> )=>{
             console.log("changement de valeu",e.target);
           
             const {name,value}= e.target;
-            setProduit((prev)=>({
+            setRayon((prev)=>({
                 ...prev,
                 [name]:name ==="parentId" ? parseInt(value) : value,
             }));
         }
         const handleUpdate= async (e: React.FormEvent)=>{
-            e.preventDefault();
-            const res = await fetch(`http://localhost:3003/gateway/${id}?service=ServiceStock&module=${moduleName}`, {
-                method: "PATCH",
-                headers: { 
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${session?.user?.accessToken}`,
-                },
-                body:JSON.stringify(rayon)
-              });
-              console.log('les update:',res);
-              
-              if (res.ok) {
-              router.push("/Stock/rayons")  
-              }
+            await addData(RequestRayon.endpoint.PAtCH(id), "POST","/Stock/rayons",  rayon);
         }
     return (
         <div className="content-wrapper">
@@ -84,37 +73,36 @@ const [ rayon,setProduit] = useState<Rayons>({nom:"",})
                         <form role="form" onSubmit={handleUpdate}>
                         <div className="box-body">
                         <div className="row">
-          <div className="form-group col-md-6">
-              <label htmlFor="nom">Nom</label>
-              <input type="text" className="form-control" id="nom"  name="nom"
-              value={rayon?.nom} 
-              required
-              onChange={handleChange}
-              />
-          </div>
-          
-          <div className="form-group col-md-6">
-            <label htmlFor="entrepotId">
-                Entrepot
-            </label>
-            <select 
-            className="form-control" 
-            id="entrepotId" 
-            name="entrepotId"
-            value={rayon?.entrepotId ?? ""}
-            onChange={handleChange}
-            >
-                <option  value={0}>selectionne une categorie 
-                </option>
-                {AllEntrepot.map((entreprot)=>(
-                    <option key={entreprot.id} value={entreprot.id}>
-                    {entreprot.nom}
-                  </option>
-                ))}
-            </select>
-                
-            </div>
-          </div>
+                            <div className="form-group col-md-6">
+                                <label htmlFor="nom">Nom</label>
+                                <input type="text" className="form-control" id="nom"  name="nom"
+                                value={rayon?.nom} 
+                                required
+                                onChange={handleChange}
+                                />
+                            </div>
+                            
+                            <div className="form-group col-md-6">
+                                <label htmlFor="entrepotId">
+                                    Entrepot
+                                </label>
+                                <select 
+                                className="form-control" 
+                                id="entrepotId" 
+                                name="entrepotId"
+                                value={rayon?.entrepotId ?? ""}
+                                onChange={(e)=> setRayon({entrepotId:+ e.target.value})}>
+                                    <option  value={0}>selectionne un entrpot 
+                                    </option>
+                                    {AllEntrepot.map((entreprot)=>(
+                                        <option key={entreprot.id} value={entreprot.id}>
+                                        {entreprot.nom}
+                                    </option>
+                                    ))}
+                                </select>
+                                    
+                                </div>
+                            </div>
                      
                         </div>
 

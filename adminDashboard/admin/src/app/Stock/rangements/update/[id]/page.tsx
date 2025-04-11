@@ -1,80 +1,127 @@
+"use client";
+
+import React, { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { getOne, useAddData, useFetchData } from "@/hooks/useFetchData";
+import { useSession } from "next-auth/react";
+import BreadCrumb from "@/components/UI/Breadcrumb";
+import { Rangements, Rayons } from "@/types/model/entity";
+import { RequestData } from "@/types/api/endpoint";
 
 
 
-const serviceName= "ServiceStock";
-const moduleName = "rangement"
-const endpoint  = `gateway?${serviceName ? "service="+serviceName:''}&${moduleName ? "module="+moduleName : ''}`
-export default function  AddUser () {
+const pageInfo=[
+  { label: "Stock", link: "/Stock" },
+  { label: "categorie product", link: "/Stock/categories_produits" },
+  { label: "Ajoute" }
+]
+
+const RequestRayon = new RequestData("ServiceStock","rayon")
+const RequestRangement = new RequestData("ServiceStock","rangement")
+const UpdateRengement = () => {
+    const params = useParams();
+    const {id} = params as {id:string};
+    const [ Rangements,setRangements] = useState<Rangements>()
+    const { addData, loading:loadUpdate, error:errUpdate } = useAddData();
+
+    const [ royon,setRayon] = useState<Rayons[]>([])
+    const {data:AllRayons, loading:loadCat, error:ErrCat} = useFetchData<Rayons[]>(RequestRayon.endpoint.GET(),"GET")
+    const {data:dataList, loading, error}=  getOne<Rangements>(RequestRangement.endpoint.GETONE(id),"GET");
+
+    useEffect(()=>{
     
-    return (
-        <div className="content-wrapper">
-            <section className="content-header">
-                <h1>
-                    Utilisateurs
-                    <small>Panneau de contrôle des utilisateurs</small>
-                </h1>
-                <ol className="breadcrumb">
-                    <li><a href="#"><i className="fa fa-dashboard"></i> Accueil</a></li>
-                    <li><a href="#">Utilisateurs</a></li>
-                    <li className="active"> Listes</li>
-                </ol>
-            </section>
-            <section className="content">
-                <div className="col-xs-12">
-                    <div className="box box-primary">
-                            
-                        <div className="box-header">
-                        <h3 className="box-title">Ajouter</h3>
-                        </div>
-                        <form role="form">
-                        <div className="box-body">
-                            <div className="row">
-                                <div className="form-group col-md-6">
-                                    <label htmlFor="exampleInputEmail1">Nom</label>
-                                    <input type="name" className="form-control" id="exampleInputEmail1" placeholder="Entrer votre nom" />
-                                </div>
-                                <div className="form-group col-md-6">
-                                    <label htmlFor="exampleInputEmail1">Prénom</label>
-                                    <input type="name" className="form-control" id="exampleInputEmail1" placeholder="Entrer votre prénom" />
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="form-group col-md-6">
-                                    <label htmlFor="exampleInputPassword1">Email</label>
-                                    <input type="email" className="form-control" id="exampleInputPassword1" placeholder="Entrer votre email" />
-                                </div>
-                                <div className="form-group col-md-6">
-                                    <label htmlFor="exampleInputPassword2">Mot de passe</label>
-                                    <input type="password" className="form-control" id="exampleInputPassword2" placeholder="Password" />
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="form-group col-md-12">
-                                    <label htmlFor="exampleInputPassword1">Role</label>
-                                    <input type="name" className="form-control" id="exampleInputPassword1" placeholder="Password" />
-                                </div>
-                            </div>
-                            {/* <div className="form-group">
-                            <label htmlFor="exampleInputFile">File input</label>
-                            <input type="file" id="exampleInputFile" />
-                            <p className="help-block">Example block-level help text here.</p>
-                            </div>
-                            <div className="checkbox">
-                            <label htmlFor="">
-                                <input type="checkbox" /> 
-                            </label>
-                            </div> */}
-                        </div>
-
-                        <div className="box-footer">
-                            <button type="submit" className="btn btn-primary">Ajouter</button>
-                        </div>
-                        </form>
-                    </div>
-                    
-                </div>
-            </section>
-        </div>
-    )
+            if (AllRayons) {
+                setRayon(AllRayons)
+            }
+            
+        },[AllRayons])
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        await addData(RequestRangement.endpoint.POST(), "POST","/Stock/rangements", Rangements, );
+    };
+    const handleChange= async (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement |HTMLTextAreaElement> )=>{
+    console.log("changement de valeu",e.target);
+  
+    const {name,value}= e.target;
+    setRangements((prev)=>({
+        ...prev,
+        [name]: value,
+    }));
 }
 
+  return (
+    <>
+      <div className="content-wrapper">
+      <section className="content-header">
+        <h1>
+            Rangement
+            <small>Panneau de contrôle des Rangement</small>
+        </h1>
+        <BreadCrumb items={pageInfo}/>
+      </section>
+      <section className="content">
+      <div className="col-xs-12">
+      <div className="box box-primary ">
+      <div className="box-header">
+        <h3 className="box-title">Ajouter un rangemnt</h3>
+      </div>
+      <form onSubmit={handleSubmit} >
+        <div className="box-body">
+          <div className="row">
+          <div className="form-group col-md-6">
+              <label htmlFor="nom">Nom</label>
+              <input type="text" className="form-control" id="nom"  name="nom"
+              value={Rangements?.nom} 
+              required
+              onChange={handleChange}
+              />
+          </div>
+
+          <div className="form-group col-md-6">
+            <label htmlFor="rayonId">
+                Rayon 
+            </label>
+            <select 
+            className="form-control" 
+            id="rayonId" 
+            name="rayonId"
+            value={Rangements?.rayonId}
+            onChange={(e)=> setRangements({rayonId:+ e.target.value})}
+            >
+                <option  value={0}>selectionne un rayon 
+                </option>
+                {royon.map((ray)=>(
+                    <option key={ray.id} value={ray.id}>
+                    {ray.nom}
+                  </option>
+                ))}
+            </select>
+                
+            </div>
+     
+          
+    
+          </div>
+          </div>
+        <div className="box-footer">
+        <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded">
+          Ajouter
+        </button>
+        </div>
+       
+        
+      </form>
+    
+      
+    
+    </div>
+    </div>
+      </section>
+</div>
+    </>
+  
+
+  );
+};
+
+export default UpdateRengement;

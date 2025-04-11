@@ -3,22 +3,21 @@ import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react";
 
-import { getOne, useFetchData } from "@/hooks/useFetchData";
+import { getOne, useAddData, useFetchData } from "@/hooks/useFetchData";
 import { Categories } from "@/types/model/entity";
+import { RequestData } from "@/types/api/endpoint";
 
 
-
+const Request = new RequestData("ServiceStock","categorie")
 export default function  UpdateCategories () {
     const params = useParams();
     const {id} = params as {id:string};
-    const {data:session} = useSession();    
-    const router = useRouter();
-
-    const [ categories,setCategories] = useState<Categories>({nom:"",description:"",parentId:0})
+    const { addData, loading:loadupdate, error:errorupdate } = useAddData();
+    const [ categories,setCategories] = useState<Categories>()
     const [ AllCate,setAllCate] = useState<Categories[]>([])
-    const {data:Allcategories, loading:loadCat, error:ErrCat} = useFetchData<Categories[]>(`gateway?service=ServiceStock&module=categorie`,"GET")
+    const {data:Allcategories, loading:loadCat, error:ErrCat} = useFetchData<Categories[]>(Request.endpoint.GET(),"GET")
 
-    const {data:dataList, loading, error}=  getOne<Categories>(`gateway/${id}?service=ServiceStock&module=categorie`,"GET");
+    const {data:dataList, loading:list, error:erreulist}=  getOne<Categories>(Request.endpoint.GETONE(id),"GET");
     useEffect(()=>{
 
         if (Allcategories) {
@@ -34,27 +33,8 @@ export default function  UpdateCategories () {
         e.preventDefault();
         console.log("transmission de la categorie:",categories);
         
-        await fetch(`http://localhost:3003/gateway/${id}?service=ServiceStock&module=categorie`, {
-            method: "PATCH",
-            headers: { 
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${session?.user?.accessToken}`,
-            },
-            body:JSON.stringify(categories)
-          })
-          .then(res=>{
-            console.log("mon result",res);
-            return res.json()
-          })
-          .then((data)=>{
-            console.log("mon result",data);
-            // router.push("/categories_produits");
-          })
-          .catch(err=>{
-            console.log("mon erreeur",err);
-          })
-        //   http://localhost:3003/gateway/1?service=ServiceStock&module=categorie
-        //   router.push("categories_produits")  
+        await addData(Request.endpoint.POST(), "POST","/Stock/categories_produits",  categories);
+
     }
 
     const handleChange= async (e: { target: { name: any; value: any; }; })=>{
@@ -63,7 +43,7 @@ export default function  UpdateCategories () {
         const {name,value}= e.target;
         setCategories((prev)=>({
             ...prev,
-            [name]:name ==="parentId" ? parseInt(value) : value,
+            [name]: value,
         }));
     }
 
@@ -94,14 +74,14 @@ export default function  UpdateCategories () {
                                 <div className="form-group col-md-6">
                                     <label htmlFor="nom">Nom</label>
                                     <input type="text" className="form-control" id="nom"  name="nom"
-                                    value={categories.nom} 
+                                    value={categories?.nom} 
                                      onChange={handleChange}
                                     />
                                 </div>
                                 <div className="form-group col-md-6">
                                     <label htmlFor="description">Description</label>
                                     <input name="description" type="text" className="form-control" id="description" placeholder="Entrer votre prénom" 
-                                    value={categories.description ?categories.description:""  }
+                                    value={categories?.description ?? ""}
                                     onChange={handleChange}
                                     />
                                 </div>
@@ -114,15 +94,17 @@ export default function  UpdateCategories () {
                                 className="form-control" 
                                 id="parentId" 
                                 name="parentId"
-                                value={categories.parentId}
-                                onChange={handleChange}
+                                value={categories?.parentId}
+                                onChange={(e)=>{setCategories({parentId:+e.target.value})}}
+
                                 >
-                                    <option  value={0}>selectionne une categorie parent
+                                    <option  value={0}>{categories?.parent?.nom ?? "selectionne une categorie parent"}
                                     </option>
                                     {AllCate.map((categorie)=>(
+                                        categorie?.id === categories?.parentId?"":
                                         <option key={categorie.id} value={categorie.id}>
-                                        {categorie.nom}
-                                      </option>
+                                            {categorie.nom}
+                                        </option>
                                     ))}
                                 </select>
                                     
