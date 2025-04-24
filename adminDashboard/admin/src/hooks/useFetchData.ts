@@ -113,7 +113,7 @@ export function useAddData() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const addData = async (endpoint: string, method: "POST",link:string, body: any) => {
+  const addData = async (endpoint: string, method: "POST"|"PATCH",link:string, body: any) => {
     if (status !== "authenticated") return;
 
     setLoading(true);
@@ -130,10 +130,13 @@ export function useAddData() {
       };
 
       const response = await fetch(`http://localhost:3003/${endpoint}`, options);
+      console.log("response update",response);
+      
       if (!response.ok) {
         throw new Error(`Erreur HTTP : ${response.status}`);
       }
-
+      console.log("link redirection",link);
+      
       router.push(link);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur inconnue");

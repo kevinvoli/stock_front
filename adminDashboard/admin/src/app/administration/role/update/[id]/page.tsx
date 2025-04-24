@@ -4,64 +4,68 @@ import { useParams, useRouter } from "next/navigation"
 import { useEffect, useState } from "react";
 
 import { getOne, useAddData, useFetchData } from "@/hooks/useFetchData";
-import {  Permission, Role } from "@/types/model/entity";
+import { Permission, Ressources, Role } from "@/types/model/entity";
 import { RequestData } from "@/types/api/endpoint";
+import TableRolePermission from "@/components/tables/tableRolePermission";
 
 
-const rolesRequest = new RequestData("authService","roles")
-const permissionRequest = new RequestData("authService","permission")
+const rolesRequest = new RequestData("authService", "roles");
+const ressourcesRequest = new RequestData("authService", "ressources");
+const rolePermissionRequest = new RequestData("authService", "rolepermission");
 
-export default function  UpdateRole () {
+
+export default function UpdateRole() {
     const params = useParams();
-    const {id} = params as {id:string};
-    const { addData, loading:loadupdate, error:errorupdate } = useAddData();
-    const [ role,setRoles] = useState<Role>()
-    const [ AllPermission,setAllPermission] = useState<Permission[]>([])
-    const {data:AllPermissions, loading:loadCat, error:ErrCat} = useFetchData<Permission[]>(permissionRequest.endpoint.GET(),"GET")
+    const { id } = params as { id: string };
+    const { addData, loading: loadupdate, error: errorupdate } = useAddData();
+    const [role, setRole] = useState<Role>();
+    const [allRessources, setAllRessources] = useState<Ressources[]>([]);
+    const { data: fetchedRessources } = useFetchData<Ressources[]>(ressourcesRequest.endpoint.GET(), "GET");
+    const { data: fetchedRole } = getOne<Role>(rolesRequest.endpoint.GETONE(id), "GET");
 
-    console.log("ID==========================",id);
-    
-    const {data:dataList, loading:list, error:erreulist}=  getOne<Role>(rolesRequest.endpoint.GETONE(id),"GET");
-    useEffect(()=>{
+    useEffect(() => {
+        if (fetchedRessources) {
+            setAllRessources(fetchedRessources);
+        }
+        if (fetchedRole) {
+            setRole(fetchedRole);
+        }
+    }, [fetchedRessources, fetchedRole]);
 
-        if (AllPermissions) {
-            setAllPermission(AllPermissions)
-            console.log("touter les categorie:", AllPermissions);
-        }
-        if (dataList) { 
-            setRoles(dataList)
-            console.log("le role luis meme", role);
-        }
-    },[AllPermissions,dataList])
- 
-    const handleUpdate= async (e:React.FormEvent)=>{
+    const handleUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("transmission de la categorie:",role);
-        
-        await addData(rolesRequest.endpoint.POST(), "POST","/Stock/categories_produits",  role);
+        if (role) {
+            const updatedRole = {
+                ...role,
+                permissions: role.permissions?.map(p => p.id) // On garde uniquement les IDs ici
+            };
+            await addData(rolePermissionRequest.endpoint.PAtCH(id), "PATCH", "/administration/role", updatedRole);
+        }
+    };
+    
 
-    }
-
-    const handleChange= async (e: { target: { name: any; value: any; }; })=>{
-        console.log("changement de valeu",e.target);
-      
-        const {name,value}= e.target;
-        setRoles((prev)=>({
-            ...prev,
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setRole((prev) => ({
+            ...prev!,
             [name]: value,
         }));
-    }
+    };
 
-    const handleTable= async (permi:Permission)=>{
-        return <>{permi} </>
-    }
+    const handlePermissionToggle = (permission: Permission) => {
+        if (!role) return;
+        const exists = role.permissions?.some(p => p.id === permission.id);
+        const updatedPermissions = exists
+            ? role.permissions?.filter(p => p.id !== permission.id)
+            : [...(role.permissions || []), permission];
+
+        setRole(prev => ({
+            ...prev!,
+            permissions: updatedPermissions
+        }));
+    };
 
     return (
-
-        <>  
-        
-        
-    
         <div className="content-wrapper">
             <section className="content-header">
                 <h1>
@@ -70,157 +74,103 @@ export default function  UpdateRole () {
                 </h1>
                 <ol className="breadcrumb">
                     <li><a href="#"><i className="fa fa-dashboard"></i> Accueil</a></li>
-                    <li><a href="#">update</a></li>
-                    <li className="active"> Categorie</li>
+                    <li><a href="#">Mise à jour</a></li>
+                    <li className="active">Rôle</li>
                 </ol>
             </section>
             <section className="content">
                 <div className="col-xs-12">
                     <div className="box box-primary">
-                            
                         <div className="box-header">
-                        <h3 className="box-title">update</h3>
+                            <h3 className="box-title">Mise à jour du rôle</h3>
                         </div>
-                        <form id="formActualites" >
-
+                        <form id="formRole" onSubmit={handleUpdate}>
                             <div className="box-body">
                                 <div className="content-in">
                                     <div className="tab_cadre" id="cadre_francais">
-                                        <input type="hidden" id="hiddenid" name="id" value="5"/>
-                                        <label htmlFor="inputlibelle_fr" className="requis ">
-                                        <b>Libellé (FR)</b>
-                                        </label>
-                                        <input type="text" list="listelibelle_fr" id="inputlibelle_fr" name="libelle_fr" value={role?.nom} data-value={role?.nom} className=" Flat green skin checkbox "/>
+                                        <label htmlFor="inputlibelle_fr" className="requis"><b>Libellé (FR)</b></label>
+                                        <input
+                                            type="text"
+                                            id="inputlibelle_fr"
+                                            name="nom"
+                                            value={role?.nom || ""}
+                                            onChange={handleChange}
+                                            className="Flat green skin checkbox"
+                                        />
                                     </div>
-                                    <br/>
-                                    <table id="example2" className="table table-bordered table-hover">
-                                   {AllPermission.map((permission)=>handleTable(permission))}
-                                        <thead>
-                                            <tr>
-                                                
-                                                <th className="l220">Publications</th>
-                                                <th className="l60">visioner</th>
-                                                <th className="l60">ajouter</th>
-                                                <th className="l60">modifier</th>
-                                                <th className="l60">supprimer</th>
-                                            </tr>
-                                        </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td className="">Planing</td>
-                                            <td className="center">
-                                                <label htmlFor="permissions[248][ajouter]" className="l80" style={{display:"margin-left:10px"}}>
-                                                <div className="slideCheckBoxSquare_mini">
-                                                    <input type="hidden" name="permissions[248][ajouter]" value="0"/>
-                                                    <input type="checkbox" name="permissions[248][ajouter]" id="permissions[248][ajouter]" value="1"/>
-                                                    <span></span>
-                                                </div>
-                                                </label>
-                                            </td>
-                                            <td className="center">
-                                                <label htmlFor="permissions[248][modifier]" className="l80" style={{display:"margin-left:10px"}}>
-                                                <div className="slideCheckBoxSquare_mini">
-                                                    <input type="hidden" name="permissions[248][modifier]" value="0"/>
-                                                    <input type="checkbox" name="permissions[248][modifier]" id="permissions[248][modifier]" value="1"/>
-                                                    <span></span>
-                                                </div>
-                                                </label>
-                                            </td>
-                                            <td className="center">
-                                                <label htmlFor="permissions[248][supprimer]" className="l80" style={{display:"margin-left:10px"}}>
-                                                <div className="slideCheckBoxSquare_mini">
-                                                    <input type="hidden" name="permissions[248][supprimer]" value="0"/>
-                                                    <input type="checkbox" name="permissions[248][supprimer]" id="permissions[248][supprimer]" value="1" />
-                                                    <span></span>
-                                                </div>
-                                                </label>
-                                            </td>
-                                            <td className="center">
-                                                <label htmlFor="permissions[248][supprimer]" className="l80" style={{display:"margin-left:10px"}}>
-                                                <div className="slideCheckBoxSquare_mini">
-                                                    <input type="hidden" name="permissions[248][supprimer]" value="0"/>
-                                                    <input type="checkbox" name="permissions[248][supprimer]" id="permissions[248][supprimer]" value="1" />
-                                                    <span></span>
-                                                </div>
-                                                </label>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td className="">Formules</td>
-                                            <td className="center">
-                                                <label htmlFor="permissions[243][ajouter]" className="l80" style={{display:"margin-left:10px"}}>
-                                                <div className="slideCheckBoxSquare_mini">
-                                                    <input type="hidden" name="permissions[243][ajouter]" value="0"/>
-                                                    <input type="checkbox" name="permissions[243][ajouter]" id="permissions[243][ajouter]" value="1" />
-                                                    <span></span>
-                                                </div>
-                                                </label>
-                                            </td>
-                                            <td className="center">
-                                                <label htmlFor="permissions[243][modifier]" className="l80" style={{display:"margin-left:10px"}}>
-                                                <div className="slideCheckBoxSquare_mini">
-                                                    <input type="hidden" name="permissions[243][modifier]" value="0"/>
-                                                    <input type="checkbox" name="permissions[243][modifier]" id="permissions[243][modifier]" value="1" />
-                                                    <span></span>
-                                                </div>
-                                                </label>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                    <thead>
-                                        <tr>
-                                        <th className="l220">Pages Statiques</th>
-                                        <th className="l60">ajouter</th>
-                                        <th className="l60">modifier</th>
-                                        <th className="l60">supprimer</th>
-                                        </tr>
-                                    </thead>
 
-                                    <tbody>
-                                        <tr>
-                                        <td className="">Pages Statiques</td>
-                                        <td className="center">
-                                            <label htmlFor="permissions[83][ajouter]" className="l80" style={{display:"margin-left:10px"}}>
-                                            <div className="slideCheckBoxSquare_mini">
-                                                <input type="hidden" name="permissions[83][ajouter]" value="0"/>
-                                                <input type="checkbox" name="permissions[83][ajouter]" id="permissions[83][ajouter]" value="1" />
-                                                <span></span>
-                                            </div>
-                                            </label>
-                                        </td>
-                                        </tr>
-                                    </tbody>
+                                    <br />
+
+                                    <table className="table table-bordered table-hover">
+                                        {allRessources.map((ressource) => (
+                                            <tbody key={ressource.id}>
+                                                <tr>
+                                                    <th className="l220">{ressource.nom}</th>
+                                                    {ressource.permission?.map((permission) => (
+                                                        <th key={permission.id} className="l60">{permission.action}</th>
+                                                    ))}
+                                                </tr>
+                                                <tr>
+                                                    <td>Autorisation</td>
+                                                    {ressource.permission?.map((permission) => {
+                                                        const isChecked = role?.permissions?.some(p => p.id === permission.id);
+                                                        return (
+                                                            <td key={permission.id}>
+                                                                <div className="form-group">
+                                                                    <label htmlFor={`perm_${permission.id}`}>
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            id={`perm_${permission.id}`}
+                                                                            name={`perm_${permission.id}`}
+                                                                            checked={isChecked}
+                                                                            onChange={() => handlePermissionToggle(permission)}
+                                                                            className="flat-red"
+                                                                        />
+                                                                    </label>
+                                                                </div>
+                                                            </td>
+                                                        );
+                                                    })}
+                                                </tr>
+                                            </tbody>
+                                        ))}
                                     </table>
 
-                                    <br/>
-                                <label htmlFor="statut" className="l300" style={{display:"margin-left:10px"}}>
-                                <div className="slideCheckBoxSquare">
-                                    <input type="hidden" name="statut" value="0"/>
-                                    <input type="checkbox" id="statut" name="statut" value="1" />
-                                    <span></span>
-                                </div>Statut(activé/désactivé)
-                                </label>
-                                <br/>
-                            </div>
-                            <div className="form-actions">
-                                <button type="submit" className="btn-bleu l150" value="" id="name_submit">
-                                <i className="fa fa-floppy-o"></i> Enregistrer</button>
-                                <button className="btn_reset l150 lien_ajax" >
-                                    <i className="fa fa-ban"></i> Annuler
-                                </button>
+                                    <br />
+
+                                    <label htmlFor="statut" className="l300">
+                                        <div className="slideCheckBoxSquare">
+                                            <input
+                                                type="checkbox"
+                                                id="statut"
+                                                name="statut"
+                                                // checked={role?.statut === 1}
+                                                onChange={(e) => setRole((prev) => ({
+                                                    ...prev!,
+                                                    statut: e.target.checked ? 1 : 0
+                                                }))}
+                                            />
+                                            <span></span>
+                                        </div>
+                                        Statut (activé/désactivé)
+                                    </label>
+
+                                    <br />
+
+                                    <div className="form-actions">
+                                        <button type="submit" className="btn-bleu l150">
+                                            <i className="fa fa-floppy-o"></i> Enregistrer
+                                        </button>
+                                        <button type="button" className="btn_reset l150 lien_ajax">
+                                            <i className="fa fa-ban"></i> Annuler
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="padding10 left">
-                            </div>
-                    
                         </form>
                     </div>
-                    
                 </div>
             </section>
         </div>
-        
-
-        </>
-    )
+    );
 }

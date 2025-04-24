@@ -64,24 +64,40 @@ export type MouvementStock = {
 
 
 export type Permission = {
+  id?: number
+  nom?: string ;
   
-  action: string;
+  action?: string;
+
+  module?: string;
 
   
-  resource?: string;
-
-  
-  conditions?: Record<string, any>;
+  conditions?: string;
   
   isAdmin?: boolean | null; 
+
+  ressource?: Ressources;
+}
+
+export type Ressources= {
+  id?: string;
+  nom?: string ;
+
+  serviceName?: string ;
+
+  permission?: Permission[];
 }
 
 export type Role= {
   
   nom?: string;
-
   
   description?: string;
+
+  permissions?: Permission[];
+ 
+
+  utilisateurs?: Users[];
   
 }
 
@@ -135,13 +151,19 @@ export type Log= {
 }
 
 export type Users = {
-  id?:string,
-  service_source?:string,
-  service_cible?: number,
-  date?: string,
-  temps_reponse?:string,
-  created_at?: string,
-  status?: string,
+  id?: number;
+
+  name?: string;
+
+  email?: string;
+
+
+  roleId?: number ;
+
+
+  role?: Role;
+
+  isAdmin?:boolean;
 }
 
 export type Fournisseur = {

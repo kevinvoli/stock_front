@@ -8,16 +8,18 @@ export default function Checkbox() {
 
   return (
     <>
-        <label className={`${styles.checkbox} ${checked ? styles.checked : ""}`}>
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={() => setChecked(!checked)}
-        className={styles.hiddenCheckbox} // Masquer le checkbox natif
-      />
-      <span className={styles.customCheckbox} />
-      {checked ? "Coché ✅" : "Non coché ❌"}
-    </label>
+        <div className="form-group">
+        <label>
+          <input type="radio" name="r3" className="flat-red" checked/>
+        </label>
+        <label>
+          <input type="radio" name="r3" className="flat-red"/>
+        </label>
+        <label>
+          <input type="radio" name="r3" className="flat-red" disabled/>
+          Flat green skin radio
+        </label>
+      </div>
     
     </>
 
